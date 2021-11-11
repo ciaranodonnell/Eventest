@@ -1,4 +1,5 @@
 import { ASBTest } from "./ASBTesting";
+import { MassTransitMessageEncoder } from "./MessageEncoding";
 
 
 const { promisify } = require('util');
@@ -6,9 +7,18 @@ const { promisify } = require('util');
 const delay = promisify(setTimeout);
 
 
+
+// Load the .env file if it exists
+import * as dotenv from "dotenv";
+dotenv.config();
+
+
 async function main(){
     
-    var test = new ASBTest("Endpoint=sb://ciaransyoutubedemos.servicebus.windows.net/;SharedAccessKeyName=SendDemo;SharedAccessKey=LJ2juCgL6hebPIoXyF3q9EVp17MswMMIj2eVVQ6LCis=");
+    var test = new ASBTest(
+        process.env.SERVICEBUS_CONNECTION_STRING ?? "",
+        new MassTransitMessageEncoder()
+        );
     
     var demoTopicSub = await test.subscribeToTopic("demotopic");
 

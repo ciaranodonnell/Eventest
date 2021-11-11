@@ -1,28 +1,22 @@
 import * as asb from "@azure/service-bus";
-// import { ServiceBusAdministrationClient } from "@azure/service-bus";
+import { MessageEncoder, NoEncodingMessageEncoder } from "./MessageEncoding";
 // import { CreateSubscriptionOptions } from "@azure/service-bus";
 
 
 
 
-// Load the .env file if it exists
-import * as dotenv from "dotenv";
-dotenv.config();
-
 import { v4 as uuid } from 'uuid';
-
-const HOSTNAME = require("os").hostname;
-const PID = require("process").pid;
 
 export class ASBTest{
 
-    connectionString : string;
-    correlationId : string;
-    admin : asb.ServiceBusAdministrationClient;
-    sbClient :  asb.ServiceBusClient;
-    subsToCleanUp : Subscription[];
+    private connectionString : string;
+    private correlationId : string;
+    private admin : asb.ServiceBusAdministrationClient;
+    private sbClient :  asb.ServiceBusClient;
+    private subsToCleanUp : Subscription[];
+    private messageEncoder : MessageEncoder
 
-    constructor(connectionString : string){
+    constructor(connectionString : string, messageEncoder : MessageEncoder | undefined){
 
         this.connectionString = connectionString;
         this.correlationId = uuid();
@@ -35,13 +29,27 @@ export class ASBTest{
 
         this.sbClient = new  asb.ServiceBusClient(connectionString);
 
+        if (messageEncoder == undefined)
+        {
+            this.messageEncoder = new NoEncodingMessageEncoder();
+        }
+        else 
+        {
+            this.messageEncoder = messageEncoder;
+        }
     }
 
-    async subscribeToTopic(topic : string) : Promise<Subscription> {
+    /**
+     * Creates a filtered Subscription to the topic. It generates the name of the subscription and adds 
+     * a subscription filter for the correlation Id, therefore ensuring you only get messages related 
+     * to this test. 
+     * @param topicName - The name of the topic to subscribe to.
+     */
+    async subscribeToTopic(topicName : string) : Promise<Subscription> {
         // const options = new asb.CreateSubscriptionOptions();
         // options.deadLetteringOnMessageExpiration = false;
         
-        var createResult = await this.admin.createSubscription(topic, "testsub-" + this.correlationId , 
+        var createResult = await this.admin.createSubscription(topicName, "testsub-" + this.correlationId , 
         {
             // allow auto delete on idle. this will help cleanup if automatic clean up fails. this can happen if tests complete too quickly
              autoDeleteOnIdle: "PT5M", 
@@ -84,28 +92,7 @@ export class ASBTest{
             {
                 correlationId:this.correlationId,
                 contentType: "application/json",
-                body: 
-                {
-                    conversationId : this.correlationId,
-                    messageId : uuid(),
-                    message : message, 
-                    "messageType" : [
-                        "urn:message:type"
-                    ],
-                    headers : {
-                        "MT-Activity-Id" : "00-b8b6cf020495eb44b57c8eff14244671-937ecff1f3901d41-01"
-                    },
-                    "host": {
-                        "machineName": HOSTNAME,
-                        "processName": "TestingProcess",
-                        "processId": PID,
-                        "assembly": "ASBTesting",
-                        "assemblyVersion": "1.0.0.0",
-                        "frameworkVersion": "5.0.11",
-                        "massTransitVersion": "7.2.4.0",
-                        "operatingSystemVersion": "Microsoft Windows NT 10.0.19043.0"
-                    }
-                }
+                body: this.messageEncoder.processMessage(message, this.correlationId)
             });
     }
 
@@ -183,3 +170,4 @@ export class ReceiveResult{
     }
 
 }
+

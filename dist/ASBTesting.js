@@ -21,16 +21,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReceiveResult = exports.Subscription = exports.ASBTest = void 0;
 const asb = __importStar(require("@azure/service-bus"));
-// import { ServiceBusAdministrationClient } from "@azure/service-bus";
+const MessageEncoding_1 = require("./MessageEncoding");
 // import { CreateSubscriptionOptions } from "@azure/service-bus";
-// Load the .env file if it exists
-const dotenv = __importStar(require("dotenv"));
-dotenv.config();
 const uuid_1 = require("uuid");
-const HOSTNAME = require("os").hostname;
-const PID = require("process").pid;
 class ASBTest {
-    constructor(connectionString) {
+    constructor(connectionString, messageEncoder) {
         this.connectionString = connectionString;
         this.correlationId = (0, uuid_1.v4)();
         this.subsToCleanUp = [];
@@ -38,11 +33,23 @@ class ASBTest {
         // instead of the connection string for authentication.
         this.admin = new asb.ServiceBusAdministrationClient(connectionString);
         this.sbClient = new asb.ServiceBusClient(connectionString);
+        if (messageEncoder == undefined) {
+            this.messageEncoder = new MessageEncoding_1.NoEncodingMessageEncoder();
+        }
+        else {
+            this.messageEncoder = messageEncoder;
+        }
     }
-    async subscribeToTopic(topic) {
+    /**
+     * Creates a filtered Subscription to the topic. It generates the name of the subscription and adds
+     * a subscription filter for the correlation Id, therefore ensuring you only get messages related
+     * to this test.
+     * @param topicName - The name of the topic to subscribe to.
+     */
+    async subscribeToTopic(topicName) {
         // const options = new asb.CreateSubscriptionOptions();
         // options.deadLetteringOnMessageExpiration = false;
-        var createResult = await this.admin.createSubscription(topic, "testsub-" + this.correlationId, {
+        var createResult = await this.admin.createSubscription(topicName, "testsub-" + this.correlationId, {
             // allow auto delete on idle. this will help cleanup if automatic clean up fails. this can happen if tests complete too quickly
             autoDeleteOnIdle: "PT5M",
             //create the rule for the correlation id filter
@@ -74,27 +81,7 @@ class ASBTest {
         await sender.sendMessages({
             correlationId: this.correlationId,
             contentType: "application/json",
-            body: {
-                conversationId: this.correlationId,
-                messageId: (0, uuid_1.v4)(),
-                message: message,
-                "messageType": [
-                    "urn:message:type"
-                ],
-                headers: {
-                    "MT-Activity-Id": "00-b8b6cf020495eb44b57c8eff14244671-937ecff1f3901d41-01"
-                },
-                "host": {
-                    "machineName": HOSTNAME,
-                    "processName": "TestingProcess",
-                    "processId": PID,
-                    "assembly": "ASBTesting",
-                    "assemblyVersion": "1.0.0.0",
-                    "frameworkVersion": "5.0.11",
-                    "massTransitVersion": "7.2.4.0",
-                    "operatingSystemVersion": "Microsoft Windows NT 10.0.19043.0"
-                }
-            }
+            body: this.messageEncoder.processMessage(message, this.correlationId)
         });
     }
     async cleanup() {

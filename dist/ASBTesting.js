@@ -40,6 +40,9 @@ class ASBTest {
             this.messageEncoder = messageEncoder;
         }
     }
+    get testUniqueId() {
+        return this.correlationId;
+    }
     /**
      * Creates a filtered Subscription to the topic. It generates the name of the subscription and adds
      * a subscription filter for the correlation Id, therefore ensuring you only get messages related
@@ -60,6 +63,7 @@ class ASBTest {
                 }
             }
         });
+        await this.admin.createRule(topicName, "testsub-" + this.correlationId, "correlationNoDashes", { correlationId: this.correlationId.replace(/-/g, "") });
         var sub = new Subscription(this.sbClient, createResult);
         this.subsToCleanUp.push(sub);
         return sub;

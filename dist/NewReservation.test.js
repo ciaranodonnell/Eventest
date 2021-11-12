@@ -22,47 +22,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BasicTest = void 0;
 const ASBTesting_1 = require("./ASBTesting");
 const WebHelper_1 = require("./WebHelper");
 const MessageEncoding_1 = require("./MessageEncoding");
 const moment_1 = __importDefault(require("moment"));
+require("mocha");
 const { promisify } = require('util');
 const delay = promisify(setTimeout);
 // Load the .env file if it exists
 const dotenv = __importStar(require("dotenv"));
+const chai_1 = require("chai");
 dotenv.config();
-async function BasicTest() {
-    var _a;
-    var test = new ASBTesting_1.ASBTest((_a = process.env.SERVICEBUS_CONNECTION_STRING) !== null && _a !== void 0 ? _a : "", new MessageEncoding_1.MassTransitMessageEncoder());
-    var demoTopicSub = await test.subscribeToTopic("NewReservationReceived");
-    console.log("About to call API");
-    var svcResponse = await (0, WebHelper_1.postToService)("http://localhost:7071/api/SubmitReservation", { RequestCorrelationId: test.testUniqueId,
-        ReservationId: 1,
-        StartDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
-        EndDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
-        GuestId: 123
+describe('Submitting NewReservationRequest', async () => {
+    var test;
+    var demoTopicSub;
+    before(async () => {
+        // runs once before the first test in this block
+        var _a;
+        test = new ASBTesting_1.ASBTest((_a = process.env.SERVICEBUS_CONNECTION_STRING) !== null && _a !== void 0 ? _a : "", new MessageEncoding_1.MassTransitMessageEncoder());
+        demoTopicSub = await test.subscribeToTopic("NewReservationReceived");
     });
-    console.log("Web request succeeded: " + svcResponse);
-    console.log("waiting for message");
-    var receivedMessage = await demoTopicSub.waitForMessage(2000);
-    if (receivedMessage.didReceive) {
-        console.log("Message received");
-        console.log(receivedMessage.getMessageBody(0));
-    }
-    else {
-        console.log("no message received");
-    }
+    it('should get OK status', async () => {
+        console.log("About to call API");
+        var svcResponse = await (0, WebHelper_1.postToService)("https://requestbin.io/rz1jx5rz", { RequestCorrelationId: test.testUniqueId,
+            ReservationId: 1,
+            StartDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
+            EndDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
+            GuestId: 123
+        });
+        console.log("API Response : " + svcResponse);
+        (0, chai_1.expect)(svcResponse).to.equal(true);
+    });
+    it('should publish NewReservationEvent', async () => {
+        var receivedMessage = await demoTopicSub.waitForMessage(2000);
+        (0, chai_1.expect)(receivedMessage.didReceive).to.equal(true);
+    });
     //CLEAN UP
-    await delay(5000);
-    test.cleanup();
-    process.exit(0);
-}
-exports.BasicTest = BasicTest;
-try {
-    BasicTest();
-}
-catch (e) {
-    console.log(e);
-}
-//# sourceMappingURL=test.js.map
+    after(async () => {
+        test.cleanup();
+    });
+});
+//# sourceMappingURL=NewReservation.test.js.map

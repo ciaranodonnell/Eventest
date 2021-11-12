@@ -33,7 +33,7 @@ dotenv.config();
     
     it('should get OK status', async () => {    
 
-        var svcResponse = await postToService("http://localhost:7071/api/SubmitReservation", 
+        var svcResponse = await postToService(process.env.RESERVATION_SERVICE_ENDPOINT ?? "", 
                 { RequestCorrelationId : test.testUniqueId,
                     ReservationId:1,
                     StartDate : moment().format('YYYY-MM-DD HH:m:s'),

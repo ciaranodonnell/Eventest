@@ -45,7 +45,8 @@ describe('Submitting NewReservationRequest', async () => {
         demoTopicSub = await test.subscribeToTopic("NewReservationReceived");
     });
     it('should get OK status', async () => {
-        var svcResponse = await (0, WebHelper_1.postToService)("http://localhost:7071/api/SubmitReservation", { RequestCorrelationId: test.testUniqueId,
+        var _a;
+        var svcResponse = await (0, WebHelper_1.postToService)((_a = process.env.RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "", { RequestCorrelationId: test.testUniqueId,
             ReservationId: 1,
             StartDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
             EndDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),

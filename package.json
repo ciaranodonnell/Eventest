@@ -17,6 +17,6 @@
     "ts-node": "^10.4.0"
   },
   "scripts": {
-    "test" : "mocha ./dist/*.test.js --timeout 30000"
+    "test": "mocha ./dist/*.test.js --timeout 30000"
   }
 }

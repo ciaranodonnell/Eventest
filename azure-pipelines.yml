@@ -17,7 +17,7 @@ steps:
 
 - script: |
     npm install
-    npm test
+    npm run ci-all-tests
   displayName: 'npm install and run'
 
 - task: PublishTestResults@2

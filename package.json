@@ -18,6 +18,7 @@
     "ts-node": "^10.4.0"
   },
   "scripts": {
-    "test": "mocha ./dist/*.test.js --timeout 30000 --reporter mocha-junit-reporter"
+    "ci-all-tests": "mocha ./dist/*.test.js --timeout 30000 --reporter mocha-junit-reporter --exit",
+    "test": "mocha ./dist/*.test.js --timeout 30000 --exit"
   }
 }

@@ -1,5 +1,5 @@
 import { ASBTest, Subscription } from "./ASBTesting";
-import {postToService} from "./WebHelper";
+import * as http from "./WebHelper";
 import { MassTransitMessageEncoder } from "./MessageEncoding";
 
 import moment from 'moment';
@@ -33,15 +33,15 @@ dotenv.config();
     
     it('should get OK status', async () => {    
 
-        var svcResponse = await postToService(process.env.RESERVATION_SERVICE_ENDPOINT ?? "", 
+        var svcResponse = await http.postToService(process.env.SUBMIT_RESERVATION_SERVICE_ENDPOINT ?? "", 
                 { RequestCorrelationId : test.testUniqueId,
-                    ReservationId:1,
+                    ReservationId:123,
                     StartDate : moment().format('YYYY-MM-DD HH:m:s'),
                     EndDate:  moment().format('YYYY-MM-DD HH:m:s'),
                     GuestId : 123
                 } );
 
-        expect(svcResponse).to.equal(true);
+        expect(svcResponse.success).to.equal(true);
     });
 
     it('should publish NewReservationEvent', async () => {    
@@ -49,6 +49,10 @@ dotenv.config();
         expect(receivedMessage.didReceive).to.equal(true);
     });
 
+    it('should return the Reservation', async () => {    
+        var svcResponse = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=123");
+        expect(svcResponse.success).to.equal(true);
+    });
     //CLEAN UP
     after(async ()=>{
         test.cleanup();

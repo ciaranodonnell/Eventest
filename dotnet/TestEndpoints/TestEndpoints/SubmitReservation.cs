@@ -15,12 +15,12 @@ using Newtonsoft.Json;
 
 namespace TestEndpoints
 {
-    public class Function1
+    public class SubmitReservation
     {
-        private readonly ILogger<Function1> _logger;
+        private readonly ILogger<SubmitReservation> _logger;
         private readonly IPublishEndpoint injectedPublisher;
 
-        public Function1(ILogger<Function1> log, IPublishEndpoint injectedPublisher)
+        public SubmitReservation(ILogger<SubmitReservation> log, IPublishEndpoint injectedPublisher)
         {
             _logger = log;
             this.injectedPublisher = injectedPublisher;
@@ -49,6 +49,8 @@ namespace TestEndpoints
 
             return new OkObjectResult("{\"success\":true, \"output\":\"Message Sent\"}");
         }
+
+
     }
 }
 

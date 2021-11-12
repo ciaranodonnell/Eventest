@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ASBTesting_1 = require("./ASBTesting");
-const WebHelper_1 = require("./WebHelper");
+const http = __importStar(require("./WebHelper"));
 const MessageEncoding_1 = require("./MessageEncoding");
 const moment_1 = __importDefault(require("moment"));
 require("mocha");
@@ -46,17 +46,22 @@ describe('Submitting NewReservationRequest', async () => {
     });
     it('should get OK status', async () => {
         var _a;
-        var svcResponse = await (0, WebHelper_1.postToService)((_a = process.env.RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "", { RequestCorrelationId: test.testUniqueId,
-            ReservationId: 1,
+        var svcResponse = await http.postToService((_a = process.env.SUBMIT_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "", { RequestCorrelationId: test.testUniqueId,
+            ReservationId: 123,
             StartDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
             EndDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
             GuestId: 123
         });
-        (0, chai_1.expect)(svcResponse).to.equal(true);
+        (0, chai_1.expect)(svcResponse.success).to.equal(true);
     });
     it('should publish NewReservationEvent', async () => {
         var receivedMessage = await demoTopicSub.waitForMessage(2000);
         (0, chai_1.expect)(receivedMessage.didReceive).to.equal(true);
+    });
+    it('should return the Reservation', async () => {
+        var _a;
+        var svcResponse = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=123");
+        (0, chai_1.expect)(svcResponse.success).to.equal(true);
     });
     //CLEAN UP
     after(async () => {

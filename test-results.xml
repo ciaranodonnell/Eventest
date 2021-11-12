@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="1.3800" tests="3" failures="0">
+  <testsuite name="Root Suite" timestamp="2021-11-12T17:41:15" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Submitting NewReservationRequest" timestamp="2021-11-12T17:41:15" tests="3" file="C:\Users\wanna\source\GitHub\ciaranodonnell\TestCompleteForServiceBus\dist\NewReservation.test.js" time="1.3790" failures="0">
+    <testcase name="Submitting NewReservationRequest should get OK status" time="0.0690" classname="should get OK status">
+    </testcase>
+    <testcase name="Submitting NewReservationRequest should publish NewReservationEvent" time="0.8070" classname="should publish NewReservationEvent">
+    </testcase>
+    <testcase name="Submitting NewReservationRequest should return the Reservation" time="0.0150" classname="should return the Reservation">
+    </testcase>
+  </testsuite>
+</testsuites>

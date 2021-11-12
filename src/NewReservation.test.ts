@@ -21,15 +21,14 @@ dotenv.config();
     before(async () => {
         // runs once before the first test in this block
         
+        //Create a Service Bus connection for this test
         test = new ASBTest(
             process.env.SERVICEBUS_CONNECTION_STRING ?? "",
             new MassTransitMessageEncoder()
             );
         
+        //Subscribe to the topic first so we dont miss the messages
         demoTopicSub = await test.subscribeToTopic("NewReservationReceived");
-
-        
-
     });
     
     it('should get OK status', async () => {    

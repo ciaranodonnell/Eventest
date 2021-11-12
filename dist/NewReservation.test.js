@@ -39,7 +39,9 @@ describe('Submitting NewReservationRequest', async () => {
     before(async () => {
         // runs once before the first test in this block
         var _a;
+        //Create a Service Bus connection for this test
         test = new ASBTesting_1.ASBTest((_a = process.env.SERVICEBUS_CONNECTION_STRING) !== null && _a !== void 0 ? _a : "", new MessageEncoding_1.MassTransitMessageEncoder());
+        //Subscribe to the topic first so we dont miss the messages
         demoTopicSub = await test.subscribeToTopic("NewReservationReceived");
     });
     it('should get OK status', async () => {

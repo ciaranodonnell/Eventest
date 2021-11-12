@@ -17,11 +17,13 @@ namespace TestEndpoints
 {
     public class SubmitReservation
     {
+        private readonly ReservationCache reservationRepo;
         private readonly ILogger<SubmitReservation> _logger;
         private readonly IPublishEndpoint injectedPublisher;
 
-        public SubmitReservation(ILogger<SubmitReservation> log, IPublishEndpoint injectedPublisher)
+        public SubmitReservation(ILogger<SubmitReservation> log, IPublishEndpoint injectedPublisher, ReservationCache reservationRepo)
         {
+            this.reservationRepo = reservationRepo;
             _logger = log;
             this.injectedPublisher = injectedPublisher;
         }
@@ -36,15 +38,28 @@ namespace TestEndpoints
             var body = reader.ReadToEnd();
             NewReservationRequest req = JsonConvert.DeserializeObject<NewReservationRequest>(body);
 
-            await injectedPublisher.Publish<NewReservationReceivedEvent>(new NewReservationReceivedEvent
+            var reservation = reservationRepo.GetReservation(req.ReservationId);
+            reservation.ReservationId = req.ReservationId;
+            reservation.StartDate = req.StartDate;
+            reservation.EndDate = req.EndDate;
+            reservation.GuestId = req.GuestId;
+            reservation.State = "Received";
+            reservationRepo.SaveReservation(reservation);
+
+            var evnt = new NewReservationReceivedEvent
             {
                 ReservationId = req.ReservationId,
-                StartDate = req.StartDate,
-                EndDate = req.EndDate,
-                GuestId = req.GuestId,
-                RequestCorrelationId = req.RequestCorrelationId,
-                State = "Recevied"
-            }, context => context.CorrelationId = Guid.Parse(req.RequestCorrelationId));
+                Reservation = reservation,
+                RequestCorrelationId = req.RequestCorrelationId
+            };
+
+            var correlationId = Guid.Parse(req.RequestCorrelationId);
+            await injectedPublisher.Publish(evnt, 
+                context => context.CorrelationId = correlationId);
+
+
+            await injectedPublisher.Publish(new TakePaymentCommand { Amount=500*100, ReservationId = req.ReservationId},
+                context => context.CorrelationId = correlationId);
 
 
             return new OkObjectResult("{\"success\":true, \"output\":\"Message Sent\"}");

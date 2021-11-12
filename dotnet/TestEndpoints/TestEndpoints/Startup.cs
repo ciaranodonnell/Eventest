@@ -48,15 +48,24 @@ namespace TestEndpoints
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .Build();
 
+                builder.Services.AddSingleton<ReservationCache>();
 
-                builder.Services.AddSingleton<IOptions<ServiceBusOptions>>(sp =>
-                    Options.Create<ServiceBusOptions>(new ServiceBusOptions { ConnectionString = Config.GetConnectionString("ServiceBus") }));
+                builder.Services.AddSingleton(Options.Create(new ServiceBusOptions { ConnectionString = Config.GetConnectionString("ServiceBus") }));
 
-                builder.Services.AddMassTransitForAzureFunctions(x => { },
+                builder.Services
+                    .AddScoped<PaymentTrigger>()
+                    .AddMassTransitForAzureFunctions(x =>
+                    {
+                        x.AddConsumer<TakePaymentConsumer>();
+                        x.AddConsumer<PaymentTakenConsumer>();
+                    },
                     (br, x) =>
-                {
-                    x.Message<NewReservationReceivedEvent>(t => t.SetEntityName("NewReservationReceived"));
-                });
+                    {
+                        x.Message<NewReservationReceivedEvent>(t => t.SetEntityName("NewReservationReceived"));
+                        x.Message<TakePaymentCommand>(t => t.SetEntityName("TakePayment"));
+                        x.Message<PaymentTakenEvent>(t => t.SetEntityName("PaymentTaken"));
+                        x.Message<ReservationConfirmedEvent>(t => t.SetEntityName("ReservationConfirmed"));
+                    });
 
             }
             catch (Exception ex)

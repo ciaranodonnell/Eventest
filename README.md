@@ -5,11 +5,11 @@ The purpose of this library is to serve as a demonstration of how to run end to 
 When creating web applications that have asynchronous backend systems it can be very challenging to test those backends.
 In an e-commerce example: It would be useful to test that putting a new Order into the Order Service causes:
    
-1. Order Service generates a ```NewOrderReceived``` event.
-2. Order Service API returns Order status as *'Received'*
-3. Order Service issues ```TakePayment``` command from Payment Service
+1. Website sends a NewReservationRequest through a POST to the Reservation Service
+2. Reservation Service generates a ```NewReservationReceived``` event.
+3. Reservation Service issues ```TakePayment``` command to the Payment Service
 4. Payment Service issues ```Payment Taken Event```
-5. Order Service issues an ```OrderComplete``` event
+5. Reservation Service issues a ```ReservationConfirmed``` event
 
 
 ## Example of use of this library:
@@ -19,7 +19,7 @@ This library uses Mocha to run these tests like unit tests. Example code:
  describe('Submitting NewReservationRequest', async () => {
     var test : ASBTest;
     var demoTopicSub : Subscription;
-    
+    var testReservationId = 123;
     before(async () => {
         // runs once before the first test in this block
         
@@ -35,32 +35,30 @@ This library uses Mocha to run these tests like unit tests. Example code:
     
     it('should get OK status', async () => {    
 
-        console.log("About to call API");
-        //post out initial request to the service
-        var svcResponse = await postToService("https://requestbin.io/rz1jx5rz", 
+        var svcResponse = await http.postToService(process.env.SUBMIT_RESERVATION_SERVICE_ENDPOINT ?? "", 
                 { RequestCorrelationId : test.testUniqueId,
-                    ReservationId:1,
+                    ReservationId:testReservationId,
                     StartDate : moment().format('YYYY-MM-DD HH:m:s'),
                     EndDate:  moment().format('YYYY-MM-DD HH:m:s'),
                     GuestId : 123
                 } );
-        console.log("API Response : " + svcResponse);
 
-        //check we got a success response
-        expect(svcResponse).to.equal(true);
+        expect(svcResponse.success).to.equal(true);
     });
 
     it('should publish NewReservationEvent', async () => {    
-        //wait up to 2 seconds for a message from our service
         var receivedMessage = await demoTopicSub.waitForMessage(2000);
-        //check we received the event
         expect(receivedMessage.didReceive).to.equal(true);
     });
 
-    //Clean Up
+    it('should return the Reservation', async () => {    
+        var svcResponse = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
+        expect(svcResponse.success).to.equal(true);
+    });
+    //CLEAN UP
     after(async ()=>{
-        //call function to delete all the temporary subscriptions
         test.cleanup();
+
     });
 });
 ```

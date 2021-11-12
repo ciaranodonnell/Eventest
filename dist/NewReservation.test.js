@@ -35,19 +35,26 @@ const chai_1 = require("chai");
 dotenv.config();
 describe('Submitting NewReservationRequest', async () => {
     var test;
-    var demoTopicSub;
+    var NewReservationReceivedSubscription;
+    var TakePaymentSubscription;
+    var PaymentTakenSubscription;
+    var ReservationConfirmedSubscription;
+    var testReservationId = 123;
     before(async () => {
         // runs once before the first test in this block
         var _a;
         //Create a Service Bus connection for this test
         test = new ASBTesting_1.ASBTest((_a = process.env.SERVICEBUS_CONNECTION_STRING) !== null && _a !== void 0 ? _a : "", new MessageEncoding_1.MassTransitMessageEncoder());
         //Subscribe to the topic first so we dont miss the messages
-        demoTopicSub = await test.subscribeToTopic("NewReservationReceived");
+        NewReservationReceivedSubscription = await test.subscribeToTopic("NewReservationReceived");
+        TakePaymentSubscription = await test.subscribeToTopic("TakePayment");
+        PaymentTakenSubscription = await test.subscribeToTopic("PaymentTaken");
+        ReservationConfirmedSubscription = await test.subscribeToTopic("ReservationConfirmed");
     });
     it('should get OK status', async () => {
         var _a;
         var svcResponse = await http.postToService((_a = process.env.SUBMIT_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "", { RequestCorrelationId: test.testUniqueId,
-            ReservationId: 123,
+            ReservationId: testReservationId,
             StartDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
             EndDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
             GuestId: 123
@@ -55,13 +62,32 @@ describe('Submitting NewReservationRequest', async () => {
         (0, chai_1.expect)(svcResponse.success).to.equal(true);
     });
     it('should publish NewReservationEvent', async () => {
-        var receivedMessage = await demoTopicSub.waitForMessage(2000);
+        var receivedMessage = await NewReservationReceivedSubscription.waitForMessage(2000);
         (0, chai_1.expect)(receivedMessage.didReceive).to.equal(true);
     });
     it('should return the Reservation', async () => {
         var _a;
-        var svcResponse = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=123");
+        var svcResponse = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=" + testReservationId);
         (0, chai_1.expect)(svcResponse.success).to.equal(true);
+    });
+    it('should publish Take Payment Command', async () => {
+        var receivedMessage = await TakePaymentSubscription.waitForMessage(2000);
+        (0, chai_1.expect)(receivedMessage.didReceive).to.equal(true);
+    });
+    it('should publish Payment Taken Event', async () => {
+        var receivedMessage = await PaymentTakenSubscription.waitForMessage(2000);
+        (0, chai_1.expect)(receivedMessage.didReceive).to.equal(true);
+    });
+    it('should publish ReservationConfirmed event', async () => {
+        var receivedMessage = await ReservationConfirmedSubscription.waitForMessage(2000);
+        (0, chai_1.expect)(receivedMessage.didReceive).equal(true);
+    });
+    it('should return the Reservation as State=Confirmed', async () => {
+        var _a, _b;
+        var svcResponse = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=" + testReservationId);
+        var responseBody = await ((_b = svcResponse.result) === null || _b === void 0 ? void 0 : _b.json());
+        (0, chai_1.expect)(svcResponse.success).to.equal(true);
+        (0, chai_1.expect)(responseBody.State).equal("Confirmed");
     });
     //CLEAN UP
     after(async () => {

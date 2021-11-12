@@ -15,14 +15,16 @@ using Newtonsoft.Json;
 
 namespace TestEndpoints
 {
-    public class Function1
+    public class GetReservationFunction
     {
-        private readonly ILogger<Function1> _logger;
+        private readonly ILogger<GetReservationFunction> _logger;
+        private readonly ReservationCache reservationRepo;
         private readonly IPublishEndpoint injectedPublisher;
 
-        public Function1(ILogger<Function1> log)
+        public GetReservationFunction(ILogger<GetReservationFunction> log, ReservationCache reservationRepo)
         {
             _logger = log;
+            this.reservationRepo = reservationRepo;
         }
 
         [FunctionName("GetReservation")]
@@ -34,9 +36,10 @@ namespace TestEndpoints
             var resIdString = request.Query["reservationId"];
             if (int.TryParse(resIdString, out var id))
             {
-                if (id == 123)
+                var res = reservationRepo.GetReservation(id);
+                if (id == res.ReservationId)
                 {
-                    return new OkObjectResult(JsonConvert.SerializeObject(new Reservation { ReservationId = 123, StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(1), Status="Confirmed" }));
+                    return new OkObjectResult(JsonConvert.SerializeObject(res));
                 }
             }
 

@@ -32,7 +32,7 @@ dotenv.config();
     });
     
     it('should get OK status', async () => {    
-        console.log("About to call API");
+
         var svcResponse = await postToService("http://localhost:7071/api/SubmitReservation", 
                 { RequestCorrelationId : test.testUniqueId,
                     ReservationId:1,
@@ -40,7 +40,6 @@ dotenv.config();
                     EndDate:  moment().format('YYYY-MM-DD HH:m:s'),
                     GuestId : 123
                 } );
-        console.log("API Response : " + svcResponse);
 
         expect(svcResponse).to.equal(true);
     });

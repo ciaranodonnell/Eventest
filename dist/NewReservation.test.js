@@ -45,14 +45,12 @@ describe('Submitting NewReservationRequest', async () => {
         demoTopicSub = await test.subscribeToTopic("NewReservationReceived");
     });
     it('should get OK status', async () => {
-        console.log("About to call API");
         var svcResponse = await (0, WebHelper_1.postToService)("http://localhost:7071/api/SubmitReservation", { RequestCorrelationId: test.testUniqueId,
             ReservationId: 1,
             StartDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
             EndDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
             GuestId: 123
         });
-        console.log("API Response : " + svcResponse);
         (0, chai_1.expect)(svcResponse).to.equal(true);
     });
     it('should publish NewReservationEvent', async () => {

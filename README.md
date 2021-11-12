@@ -46,7 +46,7 @@ This library uses Mocha to run these tests like unit tests. Example code:
                 } );
         console.log("API Response : " + svcResponse);
 
-        //cheeck we got a success response
+        //check we got a success response
         expect(svcResponse).to.equal(true);
     });
 

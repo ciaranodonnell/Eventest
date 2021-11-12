@@ -65,31 +65,13 @@ This library uses Mocha to run these tests like unit tests. Example code:
 });
 ```
 
-Example output:
-
-``` 
-> npm test
-
-  Submitting NewReservationRequest
-About to call API
-API Response : true
-    ✔ should get OK status (180ms)
-    1) should publish NewReservationEvent
+## Example output:
 
 
-  1 passing (4s)
-  1 failing
+### Passing Tests:
+![Screenshot of Passing Tests](./docs/PassingTests.png)
 
-  1) Submitting NewReservationRequest
-       should publish NewReservationEvent:
 
-      AssertionError: expected false to equal true
-      + expected - actual
+### Failing Test
 
-      -false
-      +true
-
-      at Context.<anonymous> (dist/NewReservation.test.js:58:59)
-
-> 
-```
+![Screenshot of Passing Tests](./docs/FailingTest.png)

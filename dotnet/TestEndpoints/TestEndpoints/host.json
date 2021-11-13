@@ -1,9 +1,9 @@
 {
-    "version": "2.0",
+  "version": "2.0",
   "logging": {
     "applicationInsights": {
       "samplingSettings": {
-        "isEnabled": true,
+        "isEnabled": false,
         "excludedTypes": "Request"
       }
     },
@@ -14,7 +14,10 @@
   "extensions": {
     "serviceBus": {
       "prefetchCount": 1,
-      "messageHandlerOptions": {"autoComplete": true, "maxConcurrentCalls": 1}
+      "messageHandlerOptions": {
+        "autoComplete": true,
+        "maxConcurrentCalls": 1
+      }
     }
   }
 }

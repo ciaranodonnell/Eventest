@@ -17,6 +17,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Azure.WebJobs.ServiceBus;
+using MassTransit.Azure.ServiceBus.Core;
 
 [assembly: FunctionsStartup(typeof(TestEndpoints.Startup))]
 
@@ -25,48 +26,36 @@ namespace TestEndpoints
     [ExcludeFromCodeCoverage]
     public class Startup : FunctionsStartup
     {
-        private IConfigurationRoot Config { get; set; }
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
             try
             {
-                // Get the azure function application directory. 'C:\whatever' for local and 'd:\home\whatever' for Azure
-                var executionContextOptions = builder.Services.BuildServiceProvider()
-                    .GetService<IOptions<ExecutionContextOptions>>().Value;
-
-                var currentDirectory = executionContextOptions.AppDirectory;
-                //
-                // Get the original configuration provider from the Azure Function
-                var configuration = builder.Services.BuildServiceProvider().GetService<IConfiguration>();
-
-
-                // Create a new IConfigurationRoot and add our configuration along with Azure's original configuration 
-                this.Config = new ConfigurationBuilder()
-                    .SetBasePath(currentDirectory)
-                    .AddConfiguration(configuration) // Add the original function configuration 
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .Build();
-
+                
                 builder.Services.AddSingleton<ReservationCache>();
 
-                builder.Services.AddSingleton(Options.Create(new ServiceBusOptions { ConnectionString = Config.GetConnectionString("ServiceBus") }));
+                //builder.Services.AddSingleton(Options.Create(new ServiceBusOptions { ConnectionString = Config.GetConnectionString("ServiceBus") }));
 
                 builder.Services
-                    .AddScoped<PaymentTrigger>()
-                    .AddMassTransitForAzureFunctions(x =>
+                    .AddScoped<PaymentTriggerFunctions>()
+                    .AddMassTransitForAzureFunctions(busCfg =>
                     {
-                        x.AddConsumer<TakePaymentConsumer>();
-                        x.AddConsumer<PaymentTakenConsumer>();
-                    },
-                    (br, x) =>
-                    {
-                        x.Message<NewReservationReceivedEvent>(t => t.SetEntityName("NewReservationReceived"));
-                        x.Message<TakePaymentCommand>(t => t.SetEntityName("TakePayment"));
-                        x.Message<PaymentTakenEvent>(t => t.SetEntityName("PaymentTaken"));
-                        x.Message<ReservationConfirmedEvent>(t => t.SetEntityName("ReservationConfirmed"));
-                    });
-
+                        busCfg.AddConsumer<TakePaymentConsumer>();
+                        busCfg.AddConsumer<PaymentTakenConsumer>();
+                    }
+                    //,
+                    //(registrationContext, factoryCfg) =>
+                    //{
+                    //    factoryCfg.Message<NewReservationReceivedEvent>(t => t.SetEntityName("newreservationconfirmed"));
+                    //    factoryCfg.Message<TakePaymentCommand>(t => t.SetEntityName("takepayment"));
+                    //    factoryCfg.Message<PaymentTakenEvent>(t => t.SetEntityName("paymenttaken"));
+                    //    factoryCfg.Message<ReservationConfirmedEvent>(t => t.SetEntityName("reservationconfirmed"));
+                    //}
+                    );
+                AzureBusFactory.MessageTopology.GetMessageTopology<NewReservationReceivedEvent>().SetEntityName("newreservationconfirmed");
+                AzureBusFactory.MessageTopology.GetMessageTopology<TakePaymentCommand>().SetEntityName("takepayment");
+                AzureBusFactory.MessageTopology.GetMessageTopology<PaymentTakenEvent>().SetEntityName("paymenttaken");
+                AzureBusFactory.MessageTopology.GetMessageTopology<ReservationConfirmedEvent>().SetEntityName("reservationconfirmed");
             }
             catch (Exception ex)
             {

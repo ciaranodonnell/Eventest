@@ -12,9 +12,11 @@ const delay = promisify(setTimeout);
 import * as dotenv from "dotenv";
 import { expect } from "chai";
 import { assert } from "console";
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from "constants";
+import { SystemErrorConditionMapper } from "@azure/core-amqp";
 dotenv.config();
 
- describe('Submitting NewReservationRequest', async () => {
+describe('Submitting NewReservationRequest', async () => {
     
     var test : ASBTest;
     
@@ -56,7 +58,14 @@ dotenv.config();
 
     it('should publish NewReservationEvent', async () => {    
         var receivedMessage = await NewReservationReceivedSubscription.waitForMessage(2000);
-        expect(receivedMessage.didReceive).to.equal(true);
+        expect(receivedMessage.didReceive).equal(true);
+        
+        //test the reservation Id matches
+        expect(receivedMessage.getMessageBody(0).message.reservationId).equal(testReservationId);
+
+        //check it has the right status
+        expect(receivedMessage.getMessageBody(0).message.reservation.state).equal("Received");
+        
     });
 
     it('should return the Reservation', async () => {    

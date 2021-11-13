@@ -7,10 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
-using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
 namespace TestEndpoints
@@ -32,19 +29,23 @@ namespace TestEndpoints
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]
             HttpRequest request)
         {
-            _logger.LogInformation("C# HTTP trigger function processed a request.");
-            var resIdString = request.Query["reservationId"];
-            if (int.TryParse(resIdString, out var id))
-            {
-                var res = reservationRepo.GetReservation(id);
-                if (id == res.ReservationId)
-                {
-                    return new OkObjectResult(JsonConvert.SerializeObject(res));
-                }
-            }
+            IActionResult result = null;
+            await Task.Run(() =>
+           {
+               _logger.LogInformation("C# HTTP trigger function processed a request.");
+               var resIdString = request.Query["reservationId"];
+               if (int.TryParse(resIdString, out var id))
+               {
+                   var res = reservationRepo.GetReservation(id);
+                   if (id == res.ReservationId)
+                   {
+                       result = new OkObjectResult(JsonConvert.SerializeObject(res));
+                   }
+               }
 
-            return new NotFoundResult();
-            
+               result = new NotFoundResult();
+           });
+            return result;
         }
     }
 }

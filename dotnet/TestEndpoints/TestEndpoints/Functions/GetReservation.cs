@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
@@ -25,7 +22,7 @@ namespace TestEndpoints
         }
 
         [FunctionName("GetReservation")]
-        public IActionResult Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]
             HttpRequest request)
         {

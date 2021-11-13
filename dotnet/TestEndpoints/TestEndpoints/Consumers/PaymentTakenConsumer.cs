@@ -1,13 +1,14 @@
 ﻿using MassTransit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TestEndpoints
 {
-    internal class PaymentTakenConsumer : IConsumer<PaymentTakenEvent>
+    public struct ConsumerNamespace
+    {
+
+    }
+
+    public class PaymentTakenConsumer : IConsumer<PaymentTakenEvent>
     {
 
         public PaymentTakenConsumer( ReservationCache reservationRepo)

@@ -26,32 +26,15 @@ namespace TestEndpoints
     [ExcludeFromCodeCoverage]
     public class Startup : FunctionsStartup
     {
-
         public override void Configure(IFunctionsHostBuilder builder)
         {
             try
             {
-                
                 builder.Services.AddSingleton<ReservationCache>();
-
-                //builder.Services.AddSingleton(Options.Create(new ServiceBusOptions { ConnectionString = Config.GetConnectionString("ServiceBus") }));
-
                 builder.Services
                     .AddScoped<PaymentTriggerFunctions>()
-                    .AddMassTransitForAzureFunctions(busCfg =>
-                    {
-                        busCfg.AddConsumer<TakePaymentConsumer>();
-                        busCfg.AddConsumer<PaymentTakenConsumer>();
-                    }
-                    //,
-                    //(registrationContext, factoryCfg) =>
-                    //{
-                    //    factoryCfg.Message<NewReservationReceivedEvent>(t => t.SetEntityName("newreservationconfirmed"));
-                    //    factoryCfg.Message<TakePaymentCommand>(t => t.SetEntityName("takepayment"));
-                    //    factoryCfg.Message<PaymentTakenEvent>(t => t.SetEntityName("paymenttaken"));
-                    //    factoryCfg.Message<ReservationConfirmedEvent>(t => t.SetEntityName("reservationconfirmed"));
-                    //}
-                    );
+                    .AddMassTransitForAzureFunctions(cfg => { cfg.AddConsumersFromNamespaceContaining<ConsumerNamespace>(); });
+
                 AzureBusFactory.MessageTopology.GetMessageTopology<NewReservationReceivedEvent>().SetEntityName("newreservationconfirmed");
                 AzureBusFactory.MessageTopology.GetMessageTopology<TakePaymentCommand>().SetEntityName("takepayment");
                 AzureBusFactory.MessageTopology.GetMessageTopology<PaymentTakenEvent>().SetEntityName("paymenttaken");

@@ -3,21 +3,27 @@
   "logging": {
     "applicationInsights": {
       "samplingSettings": {
-        "isEnabled": false,
-        "excludedTypes": "Request"
+        "isEnabled": true
       }
     },
     "logLevel": {
-      "MassTransit": "Debug"
+      "MassTransit": "Debug",
+      "TestEndpoints": "Information"
     }
   },
   "extensions": {
     "serviceBus": {
-      "prefetchCount": 1,
+      "prefetchCount": 32,
       "messageHandlerOptions": {
         "autoComplete": true,
-        "maxConcurrentCalls": 1
+        "maxConcurrentCalls": 32,
+        "maxAutoRenewDuration": "00:30:00"
       }
+    },
+    "eventHub": {
+      "maxBatchSize": 64,
+      "prefetchCount": 256,
+      "batchCheckpointFrequency": 1
     }
   }
 }

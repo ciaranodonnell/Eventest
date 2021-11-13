@@ -37,9 +37,10 @@ namespace TestEndpoints
                    if (id == res.ReservationId)
                    {
                        result = new OkObjectResult(JsonConvert.SerializeObject(res));
+                       
                    }
                }
-
+               if (result is null)
                result = new NotFoundResult();
            });
             return result;

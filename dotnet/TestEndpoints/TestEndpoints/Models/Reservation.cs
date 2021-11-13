@@ -13,7 +13,7 @@ namespace TestEndpoints
         public DateTime StartDate { get; internal set; }
         public int ReservationId { get; internal set; }
         public int GuestId { get; internal set; }
-        public string State { get; internal set; }
+        
 
         public Guid? PaymentId { get; set; }
     }

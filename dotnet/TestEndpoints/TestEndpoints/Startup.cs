@@ -35,7 +35,7 @@ namespace TestEndpoints
                     .AddScoped<PaymentTriggerFunctions>()
                     .AddMassTransitForAzureFunctions(cfg => { cfg.AddConsumersFromNamespaceContaining<ConsumerNamespace>(); });
 
-                AzureBusFactory.MessageTopology.GetMessageTopology<NewReservationReceivedEvent>().SetEntityName("newreservationconfirmed");
+                AzureBusFactory.MessageTopology.GetMessageTopology<NewReservationReceivedEvent>().SetEntityName("newreservationreceived");
                 AzureBusFactory.MessageTopology.GetMessageTopology<TakePaymentCommand>().SetEntityName("takepayment");
                 AzureBusFactory.MessageTopology.GetMessageTopology<PaymentTakenEvent>().SetEntityName("paymenttaken");
                 AzureBusFactory.MessageTopology.GetMessageTopology<ReservationConfirmedEvent>().SetEntityName("reservationconfirmed");

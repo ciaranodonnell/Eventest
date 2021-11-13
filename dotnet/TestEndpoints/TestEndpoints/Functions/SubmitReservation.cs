@@ -40,7 +40,7 @@ namespace TestEndpoints
             reservation.StartDate = req.StartDate;
             reservation.EndDate = req.EndDate;
             reservation.GuestId = req.GuestId;
-            reservation.State = "Received";
+            reservation.Status = "Received";
             reservationRepo.SaveReservation(reservation);
 
             var evnt = new NewReservationReceivedEvent

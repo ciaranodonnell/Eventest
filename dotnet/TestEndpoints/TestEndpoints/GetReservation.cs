@@ -28,7 +28,7 @@ namespace TestEndpoints
         }
 
         [FunctionName("GetReservation")]
-        public async Task<IActionResult> Run(
+        public IActionResult Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]
             HttpRequest request)
         {

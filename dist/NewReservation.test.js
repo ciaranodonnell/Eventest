@@ -46,10 +46,10 @@ describe('Submitting NewReservationRequest', async () => {
         //Create a Service Bus connection for this test
         test = new ASBTesting_1.ASBTest((_a = process.env.SERVICEBUS_CONNECTION_STRING) !== null && _a !== void 0 ? _a : "", new MessageEncoding_1.MassTransitMessageEncoder());
         //Subscribe to the topic first so we dont miss the messages
-        NewReservationReceivedSubscription = await test.subscribeToTopic("NewReservationReceived");
-        TakePaymentSubscription = await test.subscribeToTopic("TakePayment");
-        PaymentTakenSubscription = await test.subscribeToTopic("PaymentTaken");
-        ReservationConfirmedSubscription = await test.subscribeToTopic("ReservationConfirmed");
+        NewReservationReceivedSubscription = await test.subscribeToTopic("newreservationreceived");
+        TakePaymentSubscription = await test.subscribeToTopic("takepayment");
+        PaymentTakenSubscription = await test.subscribeToTopic("paymenttaken");
+        ReservationConfirmedSubscription = await test.subscribeToTopic("reservationconfirmed");
     });
     it('should get OK status', async () => {
         var _a;

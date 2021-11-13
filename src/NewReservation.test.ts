@@ -37,10 +37,10 @@ describe('Submitting NewReservationRequest', async () => {
             );
         
         //Subscribe to the topic first so we dont miss the messages
-        NewReservationReceivedSubscription = await test.subscribeToTopic("NewReservationReceived");
-        TakePaymentSubscription = await test.subscribeToTopic("TakePayment");
-        PaymentTakenSubscription = await test.subscribeToTopic("PaymentTaken");
-        ReservationConfirmedSubscription = await test.subscribeToTopic("ReservationConfirmed");
+        NewReservationReceivedSubscription = await test.subscribeToTopic("newreservationreceived");
+        TakePaymentSubscription = await test.subscribeToTopic("takepayment");
+        PaymentTakenSubscription = await test.subscribeToTopic("paymenttaken");
+        ReservationConfirmedSubscription = await test.subscribeToTopic("reservationconfirmed");
     });
     
     it('should get OK status', async () => {    

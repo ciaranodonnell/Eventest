@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace TestEndpoints
 {
-    public class PaymentTrigger
+    public class PaymentTriggerFunctions
     {
-        readonly IMessageReceiver _provider;
+        readonly IMessageReceiver _receiver;
 
-        public PaymentTrigger(IMessageReceiver provider)
+        public PaymentTriggerFunctions(IMessageReceiver receiver)
         {
-            _provider = provider;
+            _receiver = receiver;
         }
 
         const string TakePaymentTopicName = "takepayment";
@@ -27,7 +27,8 @@ namespace TestEndpoints
         [FunctionName("TakePayment")]
         public async Task TakePayment([ServiceBusTrigger(TakePaymentTopicName, SubName)] Message message, CancellationToken cancellationToken)
         {
-            await _provider.Handle(TakePaymentTopicName, message, cancellationToken);
+            
+            await _receiver.Handle(TakePaymentTopicName,SubName, message, cancellationToken);
         }
         
         
@@ -35,7 +36,7 @@ namespace TestEndpoints
         [FunctionName("PaymentTaken")]
         public async Task PaymentTaken([ServiceBusTrigger(PaymentTakenTopicName, SubName)] Message message, CancellationToken cancellationToken)
         {
-            await _provider.Handle(PaymentTakenTopicName, message, cancellationToken);
+            await _receiver.Handle(PaymentTakenTopicName, SubName, message, cancellationToken);
         }
     }
 }

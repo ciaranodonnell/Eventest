@@ -63,7 +63,11 @@ describe('Submitting NewReservationRequest', async () => {
     });
     it('should publish NewReservationEvent', async () => {
         var receivedMessage = await NewReservationReceivedSubscription.waitForMessage(2000);
-        (0, chai_1.expect)(receivedMessage.didReceive).to.equal(true);
+        (0, chai_1.expect)(receivedMessage.didReceive).equal(true);
+        //test the reservation Id matches
+        (0, chai_1.expect)(receivedMessage.getMessageBody(0).message.reservationId).equal(testReservationId);
+        //check it has the right status
+        (0, chai_1.expect)(receivedMessage.getMessageBody(0).message.reservation.state).equal("Received");
     });
     it('should return the Reservation', async () => {
         var _a;

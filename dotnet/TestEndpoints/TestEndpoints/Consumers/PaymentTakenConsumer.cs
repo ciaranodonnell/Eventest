@@ -10,13 +10,12 @@ namespace TestEndpoints
     internal class PaymentTakenConsumer : IConsumer<PaymentTakenEvent>
     {
 
-        public PaymentTakenConsumer(IPublishEndpoint publisher, ReservationCache reservationRepo)
+        public PaymentTakenConsumer( ReservationCache reservationRepo)
         {
-            Publisher = publisher;
+            
             ReservationRepo = reservationRepo;
         }
 
-        public IPublishEndpoint Publisher { get; }
         public ReservationCache ReservationRepo { get; }
 
         public async Task Consume(ConsumeContext<PaymentTakenEvent> context)
@@ -26,7 +25,7 @@ namespace TestEndpoints
             res.PaymentId = context.Message.PaymentId;
             ReservationRepo.SaveReservation(res);
 
-            await Publisher.Publish(new ReservationConfirmedEvent { ReservationId = context.Message.ReservationId, Reservation = res}, 
+            await context.Publish(new ReservationConfirmedEvent { ReservationId = context.Message.ReservationId, Reservation = res}, 
                 //forward on the same correlation id
                 c => c.CorrelationId = context.CorrelationId);
         }

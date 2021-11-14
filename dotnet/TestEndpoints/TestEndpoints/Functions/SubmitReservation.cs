@@ -36,6 +36,7 @@ namespace TestEndpoints
             NewReservationRequest req = JsonConvert.DeserializeObject<NewReservationRequest>(body);
 
             var reservation = reservationRepo.GetReservation(req.ReservationId);
+            if (reservation is null) reservation = new Reservation();
             reservation.ReservationId = req.ReservationId;
             reservation.StartDate = req.StartDate;
             reservation.EndDate = req.EndDate;

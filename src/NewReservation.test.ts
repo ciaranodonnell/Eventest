@@ -1,4 +1,5 @@
-import { ASBTest, Subscription } from "./ASBTesting";
+import * as Bus from "./BusTester";
+import { AzureServiceBusTester } from "./ASBTesting";
 import * as http from "./WebHelper";
 import { MassTransitMessageEncoder } from "./MessageEncoding";
 
@@ -11,19 +12,17 @@ const delay = promisify(setTimeout);
 // Load the .env file if it exists
 import * as dotenv from "dotenv";
 import { expect } from "chai";
-import { assert } from "console";
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from "constants";
-import { SystemErrorConditionMapper } from "@azure/core-amqp";
+
 dotenv.config();
 
 describe('Submitting NewReservationRequest', async () => {
 
-    var test: ASBTest;
+    var test: Bus.BusTester;
 
-    var NewReservationReceivedSubscription: Subscription;
-    var TakePaymentSubscription: Subscription;
-    var PaymentTakenSubscription: Subscription;
-    var ReservationConfirmedSubscription: Subscription;
+    var NewReservationReceivedSubscription: Bus.Subscription;
+    var TakePaymentSubscription: Bus.Subscription;
+    var PaymentTakenSubscription: Bus.Subscription;
+    var ReservationConfirmedSubscription: Bus.Subscription;
 
     var testReservationId = 123;
 
@@ -31,7 +30,7 @@ describe('Submitting NewReservationRequest', async () => {
         // runs once before the first test in this block
 
         //Create a Service Bus connection for this test
-        test = new ASBTest(
+        test = new AzureServiceBusTester(
             process.env.SERVICEBUS_CONNECTION_STRING ?? "",
             new MassTransitMessageEncoder()
         );
@@ -41,6 +40,7 @@ describe('Submitting NewReservationRequest', async () => {
         TakePaymentSubscription = await test.subscribeToTopic("takepayment");
         PaymentTakenSubscription = await test.subscribeToTopic("paymenttaken");
         ReservationConfirmedSubscription = await test.subscribeToTopic("reservationconfirmed");
+        delay(2000);
     });
 
     it('should get OK status', async () => {
@@ -61,6 +61,7 @@ describe('Submitting NewReservationRequest', async () => {
         var receivedMessage = await NewReservationReceivedSubscription.waitForMessage(2000);
         expect(receivedMessage.didReceive).equal(true);
 
+       // console.log(receivedMessage.getMessageBody(0).message);
         //test the reservation Id matches
         //expect(receivedMessage.getMessageBody(0).message.reservationId).equal(testReservationId);
 
@@ -71,6 +72,7 @@ describe('Submitting NewReservationRequest', async () => {
 
     it('should return the Reservation', async () => {
         var svcResponse = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
+      //  console.log(svcResponse.result);
         var responseBody = await svcResponse.result?.json();
         expect(svcResponse.success).to.equal(true);
     });

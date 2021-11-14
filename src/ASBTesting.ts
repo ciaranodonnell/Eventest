@@ -2,12 +2,12 @@ import * as asb from "@azure/service-bus";
 import { MessageEncoder, NoEncodingMessageEncoder } from "./MessageEncoding";
 // import { CreateSubscriptionOptions } from "@azure/service-bus";
 
-
+import { BusTester, Subscription, ReceiveResult } from "./BusTester";
 
 
 import { v4 as uuid } from 'uuid';
 
-export class ASBTest{
+export class AzureServiceBusTester implements BusTester{
 
     private connectionString : string;
     private correlationId : string;
@@ -70,7 +70,7 @@ export class ASBTest{
         
         await this.admin.createRule(topicName, "testsub-" + this.correlationId , "correlationNoDashes", { correlationId : this.correlationId.replace(/-/g,"")});
 
-        var sub = new Subscription(this.sbClient, createResult);
+        var sub = new ASBSubscription(this.sbClient, createResult);
         this.subsToCleanUp.push(sub);
         return sub;
     }
@@ -115,7 +115,7 @@ export class ASBTest{
 }
 
 
-export class Subscription{
+export class ASBSubscription implements Subscription{
     private sub : asb.SubscriptionProperties;
     private client: asb.ServiceBusClient
     constructor( client: asb.ServiceBusClient, sub : asb.SubscriptionProperties){
@@ -131,12 +131,12 @@ export class Subscription{
         
         var receiver = this.client.createReceiver(this.sub.topicName, this.sub.subscriptionName, { receiveMode : 'receiveAndDelete'});
         var messageResult = await receiver.receiveMessages(1, {maxWaitTimeInMs: timeoutInMS});
-        return new ReceiveResult(messageResult);
+        return new ASBReceiveResult(messageResult);
     }
 
 }
 
-export class ReceiveResult{
+export class ASBReceiveResult implements ReceiveResult{
 
     readonly result : asb.ServiceBusReceivedMessage[]
 

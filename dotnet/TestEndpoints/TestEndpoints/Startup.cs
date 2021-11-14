@@ -30,6 +30,9 @@ namespace TestEndpoints
         {
             try
             {
+
+                builder.Services.AddSingleton(new ConfigData { RedisConnectionString = Environment.GetEnvironmentVariable("RedisConnectionStrings") });
+
                 builder.Services.AddSingleton<ReservationCache>();
                 builder.Services
                     .AddScoped<PaymentTriggerFunctions>()

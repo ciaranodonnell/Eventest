@@ -44,12 +44,13 @@ describe('Submitting NewReservationRequest', async () => {
         // runs once before the first test in this block
         var _a;
         //Create a Service Bus connection for this test
-        test = new ASBTesting_1.ASBTest((_a = process.env.SERVICEBUS_CONNECTION_STRING) !== null && _a !== void 0 ? _a : "", new MessageEncoding_1.MassTransitMessageEncoder());
+        test = new ASBTesting_1.AzureServiceBusTester((_a = process.env.SERVICEBUS_CONNECTION_STRING) !== null && _a !== void 0 ? _a : "", new MessageEncoding_1.MassTransitMessageEncoder());
         //Subscribe to the topic first so we dont miss the messages
         NewReservationReceivedSubscription = await test.subscribeToTopic("newreservationreceived");
         TakePaymentSubscription = await test.subscribeToTopic("takepayment");
         PaymentTakenSubscription = await test.subscribeToTopic("paymenttaken");
         ReservationConfirmedSubscription = await test.subscribeToTopic("reservationconfirmed");
+        delay(2000);
     });
     it('should get OK status', async () => {
         var _a;
@@ -65,6 +66,7 @@ describe('Submitting NewReservationRequest', async () => {
     it('should publish NewReservationEvent', async () => {
         var receivedMessage = await NewReservationReceivedSubscription.waitForMessage(2000);
         (0, chai_1.expect)(receivedMessage.didReceive).equal(true);
+        // console.log(receivedMessage.getMessageBody(0).message);
         //test the reservation Id matches
         //expect(receivedMessage.getMessageBody(0).message.reservationId).equal(testReservationId);
         //check it has the right status
@@ -73,6 +75,7 @@ describe('Submitting NewReservationRequest', async () => {
     it('should return the Reservation', async () => {
         var _a, _b;
         var svcResponse = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=" + testReservationId);
+        //  console.log(svcResponse.result);
         var responseBody = await ((_b = svcResponse.result) === null || _b === void 0 ? void 0 : _b.json());
         (0, chai_1.expect)(svcResponse.success).to.equal(true);
     });

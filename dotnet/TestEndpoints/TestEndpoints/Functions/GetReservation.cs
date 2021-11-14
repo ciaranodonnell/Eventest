@@ -34,15 +34,16 @@ namespace TestEndpoints
                if (int.TryParse(resIdString, out var id))
                {
                    var res = reservationRepo.GetReservation(id);
-                   if (id == res.ReservationId)
+                   if (res is object)
                    {
                        result = new OkObjectResult(JsonConvert.SerializeObject(res));
                        
                    }
                }
                if (result is null)
-               result = new NotFoundResult();
+                result = new NotFoundResult();
            });
+
             return result;
         }
     }

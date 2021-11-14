@@ -19,12 +19,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReceiveResult = exports.Subscription = exports.ASBTest = void 0;
+exports.ASBReceiveResult = exports.ASBSubscription = exports.AzureServiceBusTester = void 0;
 const asb = __importStar(require("@azure/service-bus"));
 const MessageEncoding_1 = require("./MessageEncoding");
-// import { CreateSubscriptionOptions } from "@azure/service-bus";
 const uuid_1 = require("uuid");
-class ASBTest {
+class AzureServiceBusTester {
     constructor(connectionString, messageEncoder) {
         this.connectionString = connectionString;
         this.correlationId = (0, uuid_1.v4)();
@@ -64,7 +63,7 @@ class ASBTest {
             }
         });
         await this.admin.createRule(topicName, "testsub-" + this.correlationId, "correlationNoDashes", { correlationId: this.correlationId.replace(/-/g, "") });
-        var sub = new Subscription(this.sbClient, createResult);
+        var sub = new ASBSubscription(this.sbClient, createResult);
         this.subsToCleanUp.push(sub);
         return sub;
     }
@@ -97,8 +96,8 @@ class ASBTest {
         }
     }
 }
-exports.ASBTest = ASBTest;
-class Subscription {
+exports.AzureServiceBusTester = AzureServiceBusTester;
+class ASBSubscription {
     constructor(client, sub) {
         this.sub = sub;
         this.client = client;
@@ -109,11 +108,11 @@ class Subscription {
     async waitForMessage(timeoutInMS) {
         var receiver = this.client.createReceiver(this.sub.topicName, this.sub.subscriptionName, { receiveMode: 'receiveAndDelete' });
         var messageResult = await receiver.receiveMessages(1, { maxWaitTimeInMs: timeoutInMS });
-        return new ReceiveResult(messageResult);
+        return new ASBReceiveResult(messageResult);
     }
 }
-exports.Subscription = Subscription;
-class ReceiveResult {
+exports.ASBSubscription = ASBSubscription;
+class ASBReceiveResult {
     constructor(result) {
         this.result = result;
     }
@@ -144,5 +143,5 @@ class ReceiveResult {
         throw new Error("getMessageBody called with Index higher than the number of returned messages");
     }
 }
-exports.ReceiveResult = ReceiveResult;
+exports.ASBReceiveResult = ASBReceiveResult;
 //# sourceMappingURL=ASBTesting.js.map

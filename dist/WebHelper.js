@@ -52,6 +52,10 @@ class Response {
     get result() {
         return this.theResult;
     }
+    get statusCode() {
+        var _a, _b;
+        return (_b = (_a = this.theResult) === null || _a === void 0 ? void 0 : _a.status) !== null && _b !== void 0 ? _b : 0;
+    }
 }
 exports.Response = Response;
 //# sourceMappingURL=WebHelper.js.map

@@ -35,8 +35,7 @@ namespace TestEndpoints
             var body = reader.ReadToEnd();
             NewReservationRequest req = JsonConvert.DeserializeObject<NewReservationRequest>(body);
 
-            var reservation = reservationRepo.GetReservation(req.ReservationId);
-            if (reservation is null) reservation = new Reservation();
+            var reservation = new Reservation();
             reservation.ReservationId = req.ReservationId;
             reservation.StartDate = req.StartDate;
             reservation.EndDate = req.EndDate;
@@ -52,6 +51,7 @@ namespace TestEndpoints
             };
 
             var correlationId = Guid.Parse(req.RequestCorrelationId);
+
             await injectedPublisher.Publish(evnt, 
                 context => context.CorrelationId = correlationId);
 

@@ -59,6 +59,9 @@ export class Response {
     get result() : f.Response | undefined {
         return this.theResult;
     }
+    get statusCode() : number  {
+        return this.theResult?.status ?? 0;
+    }
 
 
 }

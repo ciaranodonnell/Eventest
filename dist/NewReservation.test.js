@@ -61,7 +61,7 @@ describe('Submitting NewReservationRequest', async () => {
             EndDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
             GuestId: 123
         });
-        (0, chai_1.expect)(svcResponse.success).to.equal(true);
+        (0, chai_1.expect)(svcResponse.statusCode).equal(200);
     });
     it('should publish NewReservationEvent', async () => {
         var receivedMessage = await NewReservationReceivedSubscription.waitForMessage(2000);
@@ -77,11 +77,11 @@ describe('Submitting NewReservationRequest', async () => {
         var svcResponse = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=" + testReservationId);
         //  console.log(svcResponse.result);
         var responseBody = await ((_b = svcResponse.result) === null || _b === void 0 ? void 0 : _b.json());
-        (0, chai_1.expect)(svcResponse.success).to.equal(true);
+        (0, chai_1.expect)(svcResponse.success).equal(true);
     });
     it('should publish Take Payment Command', async () => {
         var receivedMessage = await TakePaymentSubscription.waitForMessage(2000);
-        (0, chai_1.expect)(receivedMessage.didReceive).to.equal(true);
+        (0, chai_1.expect)(receivedMessage.didReceive).equal(true);
     });
     it('should publish Payment Taken Event', async () => {
         var receivedMessage = await PaymentTakenSubscription.waitForMessage(2000);
@@ -95,12 +95,12 @@ describe('Submitting NewReservationRequest', async () => {
         var _a, _b;
         var svcResponse = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=" + testReservationId);
         var responseBody = await ((_b = svcResponse.result) === null || _b === void 0 ? void 0 : _b.json());
-        (0, chai_1.expect)(svcResponse.success).to.equal(true);
+        (0, chai_1.expect)(svcResponse.success).equal(true);
         (0, chai_1.expect)(responseBody.Status).equal("Confirmed");
     });
     //CLEAN UP
     after(async () => {
-        test.cleanup();
+        // test.cleanup();
     });
 });
 //# sourceMappingURL=NewReservation.test.js.map

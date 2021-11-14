@@ -54,7 +54,7 @@ describe('Submitting NewReservationRequest', async () => {
                 GuestId: 123
             });
 
-        expect(svcResponse.success).to.equal(true);
+        expect(svcResponse.statusCode).equal(200);
     });
 
     it('should publish NewReservationEvent', async () => {
@@ -74,12 +74,12 @@ describe('Submitting NewReservationRequest', async () => {
         var svcResponse = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
       //  console.log(svcResponse.result);
         var responseBody = await svcResponse.result?.json();
-        expect(svcResponse.success).to.equal(true);
+        expect(svcResponse.success).equal(true);
     });
 
     it('should publish Take Payment Command', async () => {
         var receivedMessage = await TakePaymentSubscription.waitForMessage(2000);
-        expect(receivedMessage.didReceive).to.equal(true);
+        expect(receivedMessage.didReceive).equal(true);
     });
 
 
@@ -97,13 +97,13 @@ describe('Submitting NewReservationRequest', async () => {
     it('should return the Reservation as State=Confirmed', async () => {
         var svcResponse = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
         var responseBody = await svcResponse.result?.json();
-        expect(svcResponse.success).to.equal(true);
+        expect(svcResponse.success).equal(true);
         expect(responseBody.Status).equal("Confirmed");
     });
 
     //CLEAN UP
     after(async () => {
-        test.cleanup();
+       // test.cleanup();
 
     });
 });

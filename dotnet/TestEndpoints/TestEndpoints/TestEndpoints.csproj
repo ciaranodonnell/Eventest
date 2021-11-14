@@ -22,12 +22,14 @@
 		<PackageReference Include="StackExchange.Redis" Version="2.2.88" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.30" />
+		<PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="4.0.1" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="StackExchange.Redis" />
 	  <None Remove="System.Configuration.ConfigurationManager" />
 	  <None Remove="Newtonsoft.Json" />
 	  <None Remove="Microsoft.Azure.WebJobs" />
+	  <None Remove="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="host.json">

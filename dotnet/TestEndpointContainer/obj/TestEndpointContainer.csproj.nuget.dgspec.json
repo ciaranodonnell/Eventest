@@ -1,0 +1,85 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/TestEndpointContainer.csproj": {}
+  },
+  "projects": {
+    "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/TestEndpointContainer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/TestEndpointContainer.csproj",
+        "projectName": "TestEndpointContainer",
+        "projectPath": "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/TestEndpointContainer.csproj",
+        "packagesPath": "/Users/ciaran.odonnell/.nuget/packages/",
+        "outputPath": "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/ciaran.odonnell/.config/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "MassTransit.Azure.ServiceBus.Core": {
+              "target": "Package",
+              "version": "[7.2.1, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            },
+            "StackExchange.Redis": {
+              "target": "Package",
+              "version": "[2.2.88, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[5.6.3, )"
+            },
+            "Swashbuckle.AspNetCore.Newtonsoft": {
+              "target": "Package",
+              "version": "[5.6.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.100/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

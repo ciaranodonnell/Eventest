@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = TestEndpoints
+build_property.ProjectDir = /Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpoints/

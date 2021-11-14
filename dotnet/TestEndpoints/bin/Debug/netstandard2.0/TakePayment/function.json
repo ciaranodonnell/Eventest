@@ -1,0 +1,16 @@
+{
+  "generatedBy": "Microsoft.NET.Sdk.Functions.Generator-4.0.1",
+  "configurationSource": "attributes",
+  "bindings": [
+    {
+      "type": "serviceBusTrigger",
+      "topicName": "takepayment",
+      "subscriptionName": "functionsub",
+      "isSessionsEnabled": false,
+      "name": "message"
+    }
+  ],
+  "disabled": false,
+  "scriptFile": "../bin/TestEndpoints.dll",
+  "entryPoint": "TestEndpoints.PaymentTriggerFunctions.TakePayment"
+}

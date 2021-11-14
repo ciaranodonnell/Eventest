@@ -1,0 +1,17 @@
+{
+  "generatedBy": "Microsoft.NET.Sdk.Functions.Generator-4.0.1",
+  "configurationSource": "attributes",
+  "bindings": [
+    {
+      "type": "httpTrigger",
+      "methods": [
+        "get"
+      ],
+      "authLevel": "anonymous",
+      "name": "request"
+    }
+  ],
+  "disabled": false,
+  "scriptFile": "../bin/TestEndpoints.dll",
+  "entryPoint": "TestEndpoints.GetReservationFunction.Run"
+}

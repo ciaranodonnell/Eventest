@@ -1,0 +1,7 @@
+{
+  "extensions":[
+    { "name": "ServiceBus", "typeName":"Microsoft.Azure.WebJobs.ServiceBus.ServiceBusWebJobsStartup, Microsoft.Azure.WebJobs.ServiceBus, Version=4.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"},
+    { "name": "Startup", "typeName":"TestEndpoints.Startup, TestEndpoints, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"},
+    { "name": "EventHubs", "typeName":"Microsoft.Azure.WebJobs.EventHubs.EventHubsWebJobsStartup, Microsoft.Azure.WebJobs.EventHubs, Version=4.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"}
+  ]
+}

@@ -1,7 +1,0 @@
-/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/obj/Debug/net6.0/TestEndpointContainer.csproj.AssemblyReference.cache
-/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/obj/Debug/net6.0/TestEndpointContainer.GeneratedMSBuildEditorConfig.editorconfig
-/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/obj/Debug/net6.0/TestEndpointContainer.AssemblyInfoInputs.cache
-/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/obj/Debug/net6.0/TestEndpointContainer.AssemblyInfo.cs
-/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/obj/Debug/net6.0/TestEndpointContainer.csproj.CoreCompileInputs.cache
-/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/obj/Debug/net6.0/TestEndpointContainer.MvcApplicationPartsAssemblyInfo.cs
-/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/obj/Debug/net6.0/TestEndpointContainer.MvcApplicationPartsAssemblyInfo.cache

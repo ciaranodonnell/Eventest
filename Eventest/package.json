@@ -1,0 +1,34 @@
+{
+  "name": "eventest",
+  "version": "0.1.3",
+  "description": "An end-to-end testing tool for Event Driven systems, allowing you to run full integration tests and await the events you expect to see as your business logic runs",
+  "license": "MIT",
+  "author": {
+    "name": "Ciaran O'Donnell",
+    "url": "https://ciaranodonnell.dev"
+  },
+  "keywords": [
+    "testing",
+    "event driven architecture",
+    "integration tests"
+  ],
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ciaranodonnell/eventest"
+  },
+  "dependencies": {
+    "@types/node": "^16.11.7",
+    "@types/node-fetch": "^3.0.3",
+    "@types/uuid": "^8.3.1",
+    "dotenv": "^10.0.0",
+    "node-fetch": "^3.1.0",
+    "ts-node": "^10.4.0",
+    "uuid": "^8.3.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "lint": "tslint --project \"./tsconfig.json\""
+  }
+}

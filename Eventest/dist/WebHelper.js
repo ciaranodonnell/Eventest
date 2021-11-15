@@ -36,7 +36,7 @@ async function getFromService(address, headers) {
         var httpResult = await (0, node_fetch_1.default)(address, {
             method: "GET", headers: headers
         });
-        let theResponse = new Response(httpResult, JSON.parse(await httpResult.json()));
+        let theResponse = new Response(httpResult, JSON.parse(await httpResult.blob.toString()));
         return theResponse;
     }
     catch (e) {

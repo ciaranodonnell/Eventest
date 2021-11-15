@@ -38,7 +38,7 @@ export async function getFromService(address: string, headers?: any): Promise<Re
             {
                 method: "GET", headers: headers
             });
-        let theResponse = new Response(httpResult, JSON.parse(await httpResult.json()));
+        let theResponse = new Response(httpResult, JSON.parse(await httpResult.blob.toString()));
         return theResponse;
 
     } catch (e) {

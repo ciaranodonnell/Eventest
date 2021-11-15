@@ -1,26 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/TestEndpointContainer.csproj": {}
+    "C:\\Users\\wanna\\source\\GitHub\\ciaranodonnell\\TestCompleteForServiceBus\\dotnet\\TestEndpointContainer\\TestEndpointContainer.csproj": {}
   },
   "projects": {
-    "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/TestEndpointContainer.csproj": {
+    "C:\\Users\\wanna\\source\\GitHub\\ciaranodonnell\\TestCompleteForServiceBus\\dotnet\\TestEndpointContainer\\TestEndpointContainer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/TestEndpointContainer.csproj",
+        "projectUniqueName": "C:\\Users\\wanna\\source\\GitHub\\ciaranodonnell\\TestCompleteForServiceBus\\dotnet\\TestEndpointContainer\\TestEndpointContainer.csproj",
         "projectName": "TestEndpointContainer",
-        "projectPath": "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/TestEndpointContainer.csproj",
-        "packagesPath": "/Users/ciaran.odonnell/.nuget/packages/",
-        "outputPath": "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpointContainer/obj/",
+        "projectPath": "C:\\Users\\wanna\\source\\GitHub\\ciaranodonnell\\TestCompleteForServiceBus\\dotnet\\TestEndpointContainer\\TestEndpointContainer.csproj",
+        "packagesPath": "C:\\Users\\wanna\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\wanna\\source\\GitHub\\ciaranodonnell\\TestCompleteForServiceBus\\dotnet\\TestEndpointContainer\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/ciaran.odonnell/.config/NuGet/NuGet.Config"
+          "C:\\Users\\wanna\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net5.0"
         ],
         "sources": {
-          "https://api.nuget.org/v3/index.json": {}
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://pkgs.dev.azure.com/BHADO/ef3cd2ef-a45c-49e5-8bec-ceedcc3638f5/_packaging/Back-upCare/nuget/v3/index.json": {}
         },
         "frameworks": {
           "net5.0": {
@@ -38,6 +45,10 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
+            "MassTransit.AspNetCore": {
+              "target": "Package",
+              "version": "[7.2.1, )"
+            },
             "MassTransit.Azure.ServiceBus.Core": {
               "target": "Package",
               "version": "[7.2.1, )"
@@ -52,11 +63,11 @@
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[5.6.3, )"
+              "version": "[6.2.3, )"
             },
             "Swashbuckle.AspNetCore.Newtonsoft": {
               "target": "Package",
-              "version": "[5.6.3, )"
+              "version": "[6.2.3, )"
             }
           },
           "imports": [
@@ -77,7 +88,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.100/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

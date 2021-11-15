@@ -54,11 +54,12 @@ describe('Submitting NewReservationRequest', async () => {
     });
     it('should get OK status', async () => {
         var _a;
+        console.log((0, moment_1.default)().format('YYYY-MM-DDTHH:mm:ss'));
         var svcResponse = await http.postToService((_a = process.env.SUBMIT_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "", {
             RequestCorrelationId: test.testUniqueId,
             ReservationId: testReservationId,
-            StartDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
-            EndDate: (0, moment_1.default)().format('YYYY-MM-DD HH:m:s'),
+            StartDate: (0, moment_1.default)().format('YYYY-MM-DDTHH:mm:ss'),
+            EndDate: (0, moment_1.default)().format('YYYY-MM-DDTHH:mm:ss'),
             GuestId: 123
         });
         (0, chai_1.expect)(svcResponse.statusCode).equal(200);
@@ -129,7 +130,6 @@ describe('Submitting NewReservationRequest', async () => {
         var svcResponse = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=" + testReservationId);
         var responseBody = await ((_b = svcResponse.result) === null || _b === void 0 ? void 0 : _b.json());
         (0, chai_1.expect)(svcResponse.success).equal(true);
-        console.log(responseBody);
         (0, chai_1.expect)(responseBody.Status).equal("Confirmed");
     });
     //CLEAN UP

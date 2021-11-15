@@ -8,11 +8,11 @@ namespace TestEndpointContainer
         {
         }
 
-        public string Status { get; internal set; }
-        public DateTime EndDate { get; internal set; }
-        public DateTime StartDate { get; internal set; }
-        public int ReservationId { get; internal set; }
-        public int GuestId { get; internal set; }
+        public string Status { get;  set; }
+        public DateTime EndDate { get;  set; }
+        public DateTime StartDate { get;  set; }
+        public int ReservationId { get;  set; }
+        public int GuestId { get;  set; }
         
 
         public Guid? PaymentId { get; set; }

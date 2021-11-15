@@ -45,12 +45,13 @@ describe('Submitting NewReservationRequest', async () => {
 
     it('should get OK status', async () => {
 
+        console.log(moment().format('YYYY-MM-DDTHH:mm:ss'));
         var svcResponse = await http.postToService(process.env.SUBMIT_RESERVATION_SERVICE_ENDPOINT ?? "",
             {
                 RequestCorrelationId: test.testUniqueId,
                 ReservationId: testReservationId,
-                StartDate: moment().format('YYYY-MM-DD HH:m:s'),
-                EndDate: moment().format('YYYY-MM-DD HH:m:s'),
+                StartDate: moment().format('YYYY-MM-DDTHH:mm:ss'),
+                EndDate: moment().format('YYYY-MM-DDTHH:mm:ss'),
                 GuestId: 123
             });
 
@@ -132,7 +133,6 @@ describe('Submitting NewReservationRequest', async () => {
         var svcResponse = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
         var responseBody = await svcResponse.result?.json();
         expect(svcResponse.success).equal(true);
-        console.log(responseBody);
         expect(responseBody.Status).equal("Confirmed");
     });
 

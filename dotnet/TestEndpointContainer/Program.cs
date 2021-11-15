@@ -1,11 +1,12 @@
 ﻿using MassTransit;
 using MassTransit.Azure.ServiceBus.Core.Configurators;
+using Microsoft.OpenApi.Models;
 
 namespace TestEndpointContainer;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
         var configuration = new ConfigurationBuilder()
@@ -13,36 +14,45 @@ public class Program
             .AddJsonFile($"appsettings.{environment}.json", optional: true)
             .Build();
 
-        CreateHostBuilder(args).Build().Run();
+        await CreateHostBuilder(args).RunConsoleAsync();
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args)
     {
-        return Host.CreateDefaultBuilder(args)
-             .ConfigureLogging(logging =>
-             {
-                 logging.ClearProviders();
-                 logging.AddConsole();
-             })
-             .ConfigureAppConfiguration((hostBuilder, configBuilder) =>
-             {
-                 configBuilder
-                     .SetBasePath(hostBuilder.HostingEnvironment.ContentRootPath)
-                     .AddJsonFile("appsettings.json")
-                     .AddJsonFile($"appsettings.{hostBuilder.HostingEnvironment.EnvironmentName}.json",
-                         optional: true)
-                     .AddEnvironmentVariables();
-             })
+
+        IServiceCollection Services = null;
+        IConfigurationRoot Config = null;
+
+        return new HostBuilder()
+               .ConfigureAppConfiguration((hostingContext, config) =>
+               {
+                   config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                   config.AddEnvironmentVariables();
+                   config.AddUserSecrets<Program>();
+                   config.AddCommandLine(args);
+                   Config = config.Build();
+               })
+               .ConfigureLogging(logging =>
+              {
+                  logging.ClearProviders();
+                  logging.AddConsole();
+                  logging.AddDebug();
+                  logging.SetMinimumLevel(LogLevel.Trace);
+              })
              .ConfigureServices((hostContext, services) =>
              {
-                 // Add services to the container.
+                 services.AddLogging();
+                 services.AddOptions();
 
-                 //services.AddApplicationInsightsTelemetry();
+                 services.AddSingleton<ReservationCache>();
+                 services.AddSingleton(new ConfigData { RedisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING")! });
+
+                 Services = services;
 
                  services.AddHttpClient();
+                 services.AddHttpContextAccessor();
 
-                 services.AddControllers();
-                 
+                 services.AddSwaggerGen();
                  services.AddMassTransit(x =>
                  {
                      x.AddConsumer<TakePaymentConsumer>();
@@ -50,43 +60,44 @@ public class Program
 
                      x.UsingAzureServiceBus((context, cfg) =>
                      {
-                         var connectionString = $"Endpoint=sb://{config.Namespace}.servicebus.windows.net/;SharedAccessKeyName={config.SharedAccessKeyName};SharedAccessKey={config.SharedAccessKey}";
+                         var connectionString = Environment.GetEnvironmentVariable("SERVICEBUS_CONNECTION_STRING");
                          cfg.Host(connectionString);
 
-                         //Configure fault topic for BenefitCrmSubscriber
-                         cfg.Message<Fault<CrmBenefitEventSubscriber>>(configTopology =>
-                         {
-                             configTopology.SetEntityName($"{crmBenefitSubscriber.TopicName}-fault");
-                         });
 
                          const string TakePaymentTopicName = "takepayment";
                          const string PaymentTakenTopicName = "paymenttaken";
                          const string SubName = "functionsub";
 
 
-                         cfg.SubscriptionEndpoint(
-                            SubName,
-                            TakePaymentTopicName,
-                            e =>
-                            {
-                                e.PrefetchCount = 1;
-                                e.UseMessageRetry(retryConfig =>
-                                {
-                                    //Three retries, each retry after 2 seconds
-                                    retryConfig.Interval(config.RetryCount, new TimeSpan(0, 0, config.RetryInterval));
-                                    //Retry only in below cases, we can add more to this list
-                                    retryConfig.Handle<DbUpdateConcurrencyException>();
-                                    retryConfig.Handle<SqlException>(x => x.Message.Contains("connection"));
-
-                                });
-                                e.ConfigureConsumer<TakePaymentConsumer>(context);
-                            }
+                         cfg.SubscriptionEndpoint(SubName, TakePaymentTopicName, e =>
+                         {
+                             e.PrefetchCount = 1;
+                             e.ConfigureConsumer<TakePaymentConsumer>(context);
+                         }
+                         );
+                         cfg.SubscriptionEndpoint(SubName, PaymentTakenTopicName, e =>
+                         {
+                             e.PrefetchCount = 1;
+                             e.ConfigureConsumer<PaymentTakenConsumer>(context);
+                         }
                          );
                          cfg.ConfigureEndpoints(context);
+
+                         cfg.Message<TakePaymentCommand>(t => t.SetEntityName("takepayment"));
+                         cfg.Message<PaymentTakenEvent>(t => t.SetEntityName("paymenttaken"));
+                         cfg.Message<NewReservationReceivedEvent>(t => t.SetEntityName("newreservationreceived"));
+                         cfg.Message<ReservationConfirmedEvent>(t => t.SetEntityName("reservationconfirmed"));
                      });
 
                  });
+
                  services.AddMassTransitHostedService(true);
-             });
+             })
+             .ConfigureWebHostDefaults(webBuilder =>
+                 {
+                     webBuilder.UseStartup<Startup>();
+                 });
+        ;
     }
+
 }

@@ -440,3 +440,10 @@
 /Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpoints/obj/Debug/netstandard2.0/TestEndpoints.csproj.CopyComplete
 /Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpoints/obj/Debug/netstandard2.0/TestEndpoints.dll
 /Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpoints/obj/Debug/netstandard2.0/TestEndpoints.pdb
+C:\Users\wanna\source\GitHub\ciaranodonnell\TestCompleteForServiceBus\dotnet\TestEndpoints\obj\Debug\netstandard2.0\TestEndpoints.csproj.AssemblyReference.cache
+C:\Users\wanna\source\GitHub\ciaranodonnell\TestCompleteForServiceBus\dotnet\TestEndpoints\obj\Debug\netstandard2.0\TestEndpoints.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\wanna\source\GitHub\ciaranodonnell\TestCompleteForServiceBus\dotnet\TestEndpoints\obj\Debug\netstandard2.0\TestEndpoints.AssemblyInfoInputs.cache
+C:\Users\wanna\source\GitHub\ciaranodonnell\TestCompleteForServiceBus\dotnet\TestEndpoints\obj\Debug\netstandard2.0\TestEndpoints.AssemblyInfo.cs
+C:\Users\wanna\source\GitHub\ciaranodonnell\TestCompleteForServiceBus\dotnet\TestEndpoints\obj\Debug\netstandard2.0\TestEndpoints.csproj.CoreCompileInputs.cache
+C:\Users\wanna\source\GitHub\ciaranodonnell\TestCompleteForServiceBus\dotnet\TestEndpoints\obj\Debug\netstandard2.0\TestEndpoints.dll
+C:\Users\wanna\source\GitHub\ciaranodonnell\TestCompleteForServiceBus\dotnet\TestEndpoints\obj\Debug\netstandard2.0\TestEndpoints.pdb

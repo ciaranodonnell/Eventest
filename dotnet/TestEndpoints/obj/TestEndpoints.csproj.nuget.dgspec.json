@@ -1,26 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpoints/TestEndpoints.csproj": {}
+    "C:\\Users\\wanna\\source\\GitHub\\ciaranodonnell\\TestCompleteForServiceBus\\dotnet\\TestEndpoints\\TestEndpoints.csproj": {}
   },
   "projects": {
-    "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpoints/TestEndpoints.csproj": {
+    "C:\\Users\\wanna\\source\\GitHub\\ciaranodonnell\\TestCompleteForServiceBus\\dotnet\\TestEndpoints\\TestEndpoints.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpoints/TestEndpoints.csproj",
+        "projectUniqueName": "C:\\Users\\wanna\\source\\GitHub\\ciaranodonnell\\TestCompleteForServiceBus\\dotnet\\TestEndpoints\\TestEndpoints.csproj",
         "projectName": "TestEndpoints",
-        "projectPath": "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpoints/TestEndpoints.csproj",
-        "packagesPath": "/Users/ciaran.odonnell/.nuget/packages/",
-        "outputPath": "/Users/ciaran.odonnell/Source/GitHub/ciaranodonnell/TestCompleteForServiceBus/dotnet/TestEndpoints/obj/",
+        "projectPath": "C:\\Users\\wanna\\source\\GitHub\\ciaranodonnell\\TestCompleteForServiceBus\\dotnet\\TestEndpoints\\TestEndpoints.csproj",
+        "packagesPath": "C:\\Users\\wanna\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\wanna\\source\\GitHub\\ciaranodonnell\\TestCompleteForServiceBus\\dotnet\\TestEndpoints\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/ciaran.odonnell/.config/NuGet/NuGet.Config"
+          "C:\\Users\\wanna\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netstandard2.0"
         ],
         "sources": {
-          "https://api.nuget.org/v3/index.json": {}
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://pkgs.dev.azure.com/BHADO/ef3cd2ef-a45c-49e5-8bec-ceedcc3638f5/_packaging/Back-upCare/nuget/v3/index.json": {}
         },
         "frameworks": {
           "netstandard2.0": {
@@ -99,7 +106,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.100/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

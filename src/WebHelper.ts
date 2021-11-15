@@ -17,13 +17,13 @@ export async function postToService(address:string, data:any) : Promise<Response
             },
             body: payload 
         });
-        return new Response(httpResult.status >= 200 &&  httpResult.status < 300, httpResult);
+        return new Response(httpResult.status >= 200 &&  httpResult.status < 300, httpResult,await httpResult.json());
         
     }catch(e){
         console.log("Error called New Reservation API")
         console.log(e);
     }
-    return new Response(false,undefined);
+    return new Response(false,undefined, undefined);
 }
 
 
@@ -34,28 +34,37 @@ export async function getFromService(address:string) : Promise<Response> {
         {
             method:"GET", 
         });
-        return new Response(httpResult.status >= 200 &&  httpResult.status < 300, httpResult);
+        let theResponse = new Response(httpResult.status >= 200 &&  httpResult.status < 300, httpResult, await httpResult.json());
+        return theResponse;
         
     }catch(e){
         console.log("Error called New Reservation API")
         console.log(e);
     }
-    return new Response(false,undefined);
+    return new Response(false,undefined, undefined);
 }
 
 export class Response {
     private didSuceed : boolean
     private theResult : f.Response | undefined
+    private bodyObject : any
 
-    constructor(success : boolean,result : f.Response | undefined){
+    constructor(success : boolean,result : f.Response | undefined, body : any){
         this.didSuceed = success;
         this.theResult = result;
+        this.bodyObject = body;
     }
 
     get success() : boolean{
         return this.didSuceed;
     }
-
+    get  body() : any {
+        if (this.success){
+            return this.bodyObject;
+        }else {
+            return undefined;
+        }
+    }
     get result() : f.Response | undefined {
         return this.theResult;
     }

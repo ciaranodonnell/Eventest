@@ -1,4 +1,4 @@
-# Event To End Event Testing
+# Eventually
 
 The purpose of this library is to serve as a demonstration of how to run end to end tests for Event Driven Systems.
 
@@ -17,48 +17,90 @@ In an e-commerce example: It would be useful to test that putting a new Order in
 This library uses Mocha to run these tests like unit tests. Example code:
 ``` typescript
  describe('Submitting NewReservationRequest', async () => {
-    var test : ASBTest;
-    var demoTopicSub : Subscription;
+
+    var test: Bus.BusTester;
+
+    var NewReservationReceivedSubscription: Bus.Subscription;
+    var TakePaymentSubscription: Bus.Subscription;
+    var PaymentTakenSubscription: Bus.Subscription;
+    var ReservationConfirmedSubscription: Bus.Subscription;
+
     var testReservationId = 123;
+
     before(async () => {
         // runs once before the first test in this block
-        
+
         //Create a Service Bus connection for this test
-        test = new ASBTest(
+        test = new AzureServiceBusTester(
             process.env.SERVICEBUS_CONNECTION_STRING ?? "",
             new MassTransitMessageEncoder()
-            );
-        
+        );
+
         //Subscribe to the topic first so we dont miss the messages
-        demoTopicSub = await test.subscribeToTopic("NewReservationReceived");
-    });
-    
-    it('should get OK status', async () => {    
+        NewReservationReceivedSubscription = await test.subscribeToTopic("newreservationreceived");
+        TakePaymentSubscription = await test.subscribeToTopic("takepayment");
+        PaymentTakenSubscription = await test.subscribeToTopic("paymenttaken");
+        ReservationConfirmedSubscription = await test.subscribeToTopic("reservationconfirmed");
 
-        var svcResponse = await http.postToService(process.env.SUBMIT_RESERVATION_SERVICE_ENDPOINT ?? "", 
-                { RequestCorrelationId : test.testUniqueId,
-                    ReservationId:testReservationId,
-                    StartDate : moment().format('YYYY-MM-DD HH:m:s'),
-                    EndDate:  moment().format('YYYY-MM-DD HH:m:s'),
-                    GuestId : 123
-                } );
-
-        expect(svcResponse.success).to.equal(true);
+        //give it a couple of seconds to make sure the subscriptions are active
+        delay(2000);
     });
 
-    it('should publish NewReservationEvent', async () => {    
-        var receivedMessage = await demoTopicSub.waitForMessage(2000);
+    it('should get OK status', async () => {
+        var svcResponse = await http.postToService(process.env.SUBMIT_RESERVATION_SERVICE_ENDPOINT ?? "",
+        //This is the payload to send to the service:
+            {
+                RequestCorrelationId: test.testUniqueId,
+                ReservationId: testReservationId,
+                StartDate: moment().format('YYYY-MM-DDTHH:mm:ss'),
+                EndDate: moment().format('YYYY-MM-DDTHH:mm:ss'),
+                GuestId: 123
+            });
+        // test that we got a 200 success
+        expect(svcResponse.statusCode).equal(200);
+    });
+
+    it('should publish NewReservationEvent', async () => {
+        //wait up to 2 seconds to receive a message on our subscription
+        var receivedMessage = await NewReservationReceivedSubscription.waitForMessage(2000);
+        //test we got a message
+        expect(receivedMessage.didReceive).equal(true);
+        //test the reservation Id matches
+        expect(receivedMessage.getMessageBody(0).message.reservationId).equal(testReservationId);
+    });
+
+    it('should return the Reservation', async () => {
+        var svcResponse = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
+        expect(svcResponse.success).equal(true);
+    });
+
+    it('should publish Take Payment Command', async () => {
+        var receivedMessage = await TakePaymentSubscription.waitForMessage(2000);
+        expect(receivedMessage.didReceive).equal(true);
+    });
+
+    it('should publish Payment Taken Event', async () => {
+        var receivedMessage = await PaymentTakenSubscription.waitForMessage(2000);
         expect(receivedMessage.didReceive).to.equal(true);
     });
 
-    it('should return the Reservation', async () => {    
-        var svcResponse = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
-        expect(svcResponse.success).to.equal(true);
+    it('should publish ReservationConfirmed event', async () => {
+        var receivedMessage = await ReservationConfirmedSubscription.waitForMessage(2000);
+        expect(receivedMessage.didReceive).equal(true);
     });
-    //CLEAN UP
-    after(async ()=>{
-        test.cleanup();
 
+    it('should return the Reservation as State=Confirmed', async () => {
+        var svcResponse = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
+        //test we got a 200 level response
+        expect(svcResponse.success).equal(true);
+        //test that the object in the body had a field called status with a value = 'Confirmed'
+        expect(svcResponse.body.Status).equal("Confirmed");
+    });
+
+    //Clean up after all the tests
+    after(async () => {
+      //this removes all the subscriptions we made
+      test.cleanup();
     });
 });
 ```

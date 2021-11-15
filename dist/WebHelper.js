@@ -18,13 +18,13 @@ async function postToService(address, data) {
             },
             body: payload
         });
-        return new Response(httpResult.status >= 200 && httpResult.status < 300, httpResult);
+        return new Response(httpResult.status >= 200 && httpResult.status < 300, httpResult, await httpResult.json());
     }
     catch (e) {
         console.log("Error called New Reservation API");
         console.log(e);
     }
-    return new Response(false, undefined);
+    return new Response(false, undefined, undefined);
 }
 exports.postToService = postToService;
 async function getFromService(address) {
@@ -32,22 +32,32 @@ async function getFromService(address) {
         var httpResult = await (0, node_fetch_1.default)(address, {
             method: "GET",
         });
-        return new Response(httpResult.status >= 200 && httpResult.status < 300, httpResult);
+        let theResponse = new Response(httpResult.status >= 200 && httpResult.status < 300, httpResult, await httpResult.json());
+        return theResponse;
     }
     catch (e) {
         console.log("Error called New Reservation API");
         console.log(e);
     }
-    return new Response(false, undefined);
+    return new Response(false, undefined, undefined);
 }
 exports.getFromService = getFromService;
 class Response {
-    constructor(success, result) {
+    constructor(success, result, body) {
         this.didSuceed = success;
         this.theResult = result;
+        this.bodyObject = body;
     }
     get success() {
         return this.didSuceed;
+    }
+    get body() {
+        if (this.success) {
+            return this.bodyObject;
+        }
+        else {
+            return undefined;
+        }
     }
     get result() {
         return this.theResult;

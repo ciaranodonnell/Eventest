@@ -9,7 +9,8 @@
      *
      * @param message - A message that needs to be encoded for delivery to Service Bus.
      */
-    processMessage(message: any, correlationId:string): any;
+     packageMessage(message: any, correlationId:string): any;
+     unpackMessage(brokerMessage: any) : any;
     
 }
 
@@ -21,14 +22,18 @@ const PID = require("process").pid;
 
 export class NoEncodingMessageEncoder implements MessageEncoder{
     
-    public processMessage(message:any, correlationId:string):any
+    public packageMessage(message:any, correlationId:string):any
     {
         return message;
+    }
+    public unpackMessage(brokerMessage:any):any
+    {
+        return brokerMessage;
     }
 }
 export class MassTransitMessageEncoder implements MessageEncoder{
     
-    public processMessage(message:any, correlationId:string):any
+    public packageMessage(message:any, correlationId:string):any
     {
         var result = 
         {
@@ -53,5 +58,10 @@ export class MassTransitMessageEncoder implements MessageEncoder{
             }
         };
         return result;
+    }
+
+    public unpackMessage(brokerMessage:any):any
+    {
+        return brokerMessage.message;
     }
 }

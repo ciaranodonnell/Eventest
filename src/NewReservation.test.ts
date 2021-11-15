@@ -52,7 +52,7 @@ describe('Submitting NewReservationRequest', async () => {
                 RequestCorrelationId: test.testUniqueId,
                 ReservationId: testReservationId,
                 StartDate: moment().format('YYYY-MM-DDTHH:mm:ss'),
-                EndDate: moment().format('YYYY-MM-DDTHH:mm:ss'),
+                EndDate: moment().add("2","days").format('YYYY-MM-DDTHH:mm:ss'),
                 GuestId: 123
             });
         // test that we got a 200 success
@@ -65,12 +65,12 @@ describe('Submitting NewReservationRequest', async () => {
         //test we got a message
         expect(receivedMessage.didReceive).equal(true);
         //test the reservation Id matches
-        expect(receivedMessage.getMessageBody(0).message.reservationId).equal(testReservationId);
+        expect(receivedMessage.getMessageBody().reservationId).equal(testReservationId);
     });
 
     it('should return the Reservation', async () => {
-        var svcResponse = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
-        expect(svcResponse.success).equal(true);
+        var result = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
+        expect(result.success).equal(true);
     });
 
     it('should publish Take Payment Command', async () => {
@@ -89,11 +89,12 @@ describe('Submitting NewReservationRequest', async () => {
     });
 
     it('should return the Reservation as State=Confirmed', async () => {
-        var svcResponse = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
+        var result = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
         //test we got a 200 level response
-        expect(svcResponse.success).equal(true);
+        expect(result.success).equal(true);
         //test that the object in the body had a field called status with a value = 'Confirmed'
-        expect(svcResponse.body.Status).equal("Confirmed");
+        expect(result.body.Status).equal("Confirmed");
+
     });
 
     //Clean up after all the tests

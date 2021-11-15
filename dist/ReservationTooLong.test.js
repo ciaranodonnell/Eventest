@@ -77,7 +77,7 @@ describe('Submitting Expensive Reservation', async () => {
         //test we got a message
         (0, chai_1.expect)(receivedMessage.didReceive).equal(true);
         //test the reservation Id matches
-        (0, chai_1.expect)(receivedMessage.getMessageBody(0).message.reservationId).equal(testReservationId);
+        (0, chai_1.expect)(receivedMessage.getMessageBody().reservationId).equal(testReservationId);
     });
     it('should return the Reservation', async () => {
         var _a;

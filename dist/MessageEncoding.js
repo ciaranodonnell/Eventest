@@ -5,13 +5,16 @@ const uuid_1 = require("uuid");
 const HOSTNAME = require("os").hostname;
 const PID = require("process").pid;
 class NoEncodingMessageEncoder {
-    processMessage(message, correlationId) {
+    packageMessage(message, correlationId) {
         return message;
+    }
+    unpackMessage(brokerMessage) {
+        return brokerMessage;
     }
 }
 exports.NoEncodingMessageEncoder = NoEncodingMessageEncoder;
 class MassTransitMessageEncoder {
-    processMessage(message, correlationId) {
+    packageMessage(message, correlationId) {
         var result = {
             conversationId: correlationId,
             messageId: (0, uuid_1.v4)(),
@@ -34,6 +37,9 @@ class MassTransitMessageEncoder {
             }
         };
         return result;
+    }
+    unpackMessage(brokerMessage) {
+        return brokerMessage.message;
     }
 }
 exports.MassTransitMessageEncoder = MassTransitMessageEncoder;

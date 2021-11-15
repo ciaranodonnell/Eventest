@@ -61,7 +61,7 @@ describe('Submitting NewReservationRequest', async () => {
             RequestCorrelationId: test.testUniqueId,
             ReservationId: testReservationId,
             StartDate: (0, moment_1.default)().format('YYYY-MM-DDTHH:mm:ss'),
-            EndDate: (0, moment_1.default)().format('YYYY-MM-DDTHH:mm:ss'),
+            EndDate: (0, moment_1.default)().add("2", "days").format('YYYY-MM-DDTHH:mm:ss'),
             GuestId: 123
         });
         // test that we got a 200 success
@@ -73,12 +73,12 @@ describe('Submitting NewReservationRequest', async () => {
         //test we got a message
         (0, chai_1.expect)(receivedMessage.didReceive).equal(true);
         //test the reservation Id matches
-        (0, chai_1.expect)(receivedMessage.getMessageBody(0).message.reservationId).equal(testReservationId);
+        (0, chai_1.expect)(receivedMessage.getMessageBody().reservationId).equal(testReservationId);
     });
     it('should return the Reservation', async () => {
         var _a;
-        var svcResponse = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=" + testReservationId);
-        (0, chai_1.expect)(svcResponse.success).equal(true);
+        var result = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=" + testReservationId);
+        (0, chai_1.expect)(result.success).equal(true);
     });
     it('should publish Take Payment Command', async () => {
         var receivedMessage = await TakePaymentSubscription.waitForMessage(2000);
@@ -94,11 +94,11 @@ describe('Submitting NewReservationRequest', async () => {
     });
     it('should return the Reservation as State=Confirmed', async () => {
         var _a;
-        var svcResponse = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=" + testReservationId);
+        var result = await http.getFromService(((_a = process.env.GET_RESERVATION_SERVICE_ENDPOINT) !== null && _a !== void 0 ? _a : "") + "?reservationId=" + testReservationId);
         //test we got a 200 level response
-        (0, chai_1.expect)(svcResponse.success).equal(true);
+        (0, chai_1.expect)(result.success).equal(true);
         //test that the object in the body had a field called status with a value = 'Confirmed'
-        (0, chai_1.expect)(svcResponse.body.Status).equal("Confirmed");
+        (0, chai_1.expect)(result.body.Status).equal("Confirmed");
     });
     //Clean up after all the tests
     after(async () => {

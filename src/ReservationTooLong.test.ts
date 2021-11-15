@@ -69,7 +69,7 @@ describe('Submitting Expensive Reservation', async () => {
         //test we got a message
         expect(receivedMessage.didReceive).equal(true);
         //test the reservation Id matches
-        expect(receivedMessage.getMessageBody(0).message.reservationId).equal(testReservationId);
+        expect(receivedMessage.getMessageBody().reservationId).equal(testReservationId);
     });
 
     it('should return the Reservation', async () => {

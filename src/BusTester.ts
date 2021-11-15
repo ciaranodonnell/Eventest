@@ -28,7 +28,7 @@ export declare interface ReceiveResult{
 
     get didReceive ():boolean;
 
-    get messagesReceived():number;
+    get messagesReceivedCount():number;
 
-    getMessageBody( index : number ):any;
+    getMessageBody():any;
 }

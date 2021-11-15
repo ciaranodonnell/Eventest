@@ -10,11 +10,11 @@ import { v4 as uuid } from 'uuid';
 export class AzureServiceBusTester implements BusTester{
 
     private connectionString : string;
-    private correlationId : string;
-    private admin : asb.ServiceBusAdministrationClient;
-    private sbClient :  asb.ServiceBusClient;
+    private readonly correlationId : string;
+    private readonly admin : asb.ServiceBusAdministrationClient;
+    private readonly sbClient :  asb.ServiceBusClient;
     private subsToCleanUp : Subscription[];
-    private messageEncoder : MessageEncoder
+    private readonly messageEncoder : MessageEncoder
 
     constructor(connectionString : string, messageEncoder : MessageEncoder | undefined){
 
@@ -70,7 +70,7 @@ export class AzureServiceBusTester implements BusTester{
         
         await this.admin.createRule(topicName, "testsub-" + this.correlationId , "correlationNoDashes", { correlationId : this.correlationId.replace(/-/g,"")});
 
-        var sub = new ASBSubscription(this.sbClient, createResult);
+        var sub = new ASBSubscription(this.sbClient, createResult, this.messageEncoder);
         this.subsToCleanUp.push(sub);
         return sub;
     }
@@ -98,7 +98,7 @@ export class AzureServiceBusTester implements BusTester{
             {
                 correlationId:this.correlationId,
                 contentType: "application/json",
-                body: this.messageEncoder.processMessage(message, this.correlationId)
+                body: this.messageEncoder.packageMessage(message, this.correlationId)
             });
     }
 
@@ -116,11 +116,14 @@ export class AzureServiceBusTester implements BusTester{
 
 
 export class ASBSubscription implements Subscription{
-    private sub : asb.SubscriptionProperties;
-    private client: asb.ServiceBusClient
-    constructor( client: asb.ServiceBusClient, sub : asb.SubscriptionProperties){
+    private readonly sub : asb.SubscriptionProperties;
+    private readonly client: asb.ServiceBusClient
+    private readonly messageEncoder:MessageEncoder
+
+    constructor( client: asb.ServiceBusClient, sub : asb.SubscriptionProperties, messageEncoder : MessageEncoder){
         this.sub = sub;
         this.client = client;
+        this.messageEncoder = messageEncoder;
     }
 
     get topic():string{
@@ -131,17 +134,19 @@ export class ASBSubscription implements Subscription{
         
         var receiver = this.client.createReceiver(this.sub.topicName, this.sub.subscriptionName, { receiveMode : 'receiveAndDelete'});
         var messageResult = await receiver.receiveMessages(1, {maxWaitTimeInMs: timeoutInMS});
-        return new ASBReceiveResult(messageResult);
+        return new ASBReceiveResult(messageResult, this.messageEncoder);
     }
 
 }
 
 export class ASBReceiveResult implements ReceiveResult{
 
-    readonly result : asb.ServiceBusReceivedMessage[]
+    private readonly result : asb.ServiceBusReceivedMessage[]
+    private readonly encoder: MessageEncoder
 
-    constructor(result : asb.ServiceBusReceivedMessage[]){
+    constructor(result : asb.ServiceBusReceivedMessage[], encoder:MessageEncoder){
         this.result = result;
+        this.encoder = encoder;
     }
 
     get didReceive ():boolean{
@@ -158,7 +163,7 @@ export class ASBReceiveResult implements ReceiveResult{
         return true;
     }
 
-    get messagesReceived():number{
+    get messagesReceivedCount():number{
 
         if (!Array.isArray(this.result)) {
             return 0;
@@ -167,12 +172,13 @@ export class ASBReceiveResult implements ReceiveResult{
         return this.result.length;
     }
 
-    getMessageBody( index : number ):any{
+    getMessageBody():any{
         
-        if (this.messagesReceived > index){
-            return this.result[0].body;
+        if (this.messagesReceivedCount > 0){
+            var wholeMessage = this.result[0].body;
+            return this.encoder.unpackMessage(wholeMessage);
         }
-        throw new Error("getMessageBody called with Index higher than the number of returned messages");
+        throw new Error("getMessageBody when receive didnt get a message");
     }
 
 }

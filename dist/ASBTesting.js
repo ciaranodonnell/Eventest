@@ -63,7 +63,7 @@ class AzureServiceBusTester {
             }
         });
         await this.admin.createRule(topicName, "testsub-" + this.correlationId, "correlationNoDashes", { correlationId: this.correlationId.replace(/-/g, "") });
-        var sub = new ASBSubscription(this.sbClient, createResult);
+        var sub = new ASBSubscription(this.sbClient, createResult, this.messageEncoder);
         this.subsToCleanUp.push(sub);
         return sub;
     }
@@ -84,7 +84,7 @@ class AzureServiceBusTester {
         await sender.sendMessages({
             correlationId: this.correlationId,
             contentType: "application/json",
-            body: this.messageEncoder.processMessage(message, this.correlationId)
+            body: this.messageEncoder.packageMessage(message, this.correlationId)
         });
     }
     async cleanup() {
@@ -98,9 +98,10 @@ class AzureServiceBusTester {
 }
 exports.AzureServiceBusTester = AzureServiceBusTester;
 class ASBSubscription {
-    constructor(client, sub) {
+    constructor(client, sub, messageEncoder) {
         this.sub = sub;
         this.client = client;
+        this.messageEncoder = messageEncoder;
     }
     get topic() {
         return this.sub.topicName;
@@ -108,13 +109,14 @@ class ASBSubscription {
     async waitForMessage(timeoutInMS) {
         var receiver = this.client.createReceiver(this.sub.topicName, this.sub.subscriptionName, { receiveMode: 'receiveAndDelete' });
         var messageResult = await receiver.receiveMessages(1, { maxWaitTimeInMs: timeoutInMS });
-        return new ASBReceiveResult(messageResult);
+        return new ASBReceiveResult(messageResult, this.messageEncoder);
     }
 }
 exports.ASBSubscription = ASBSubscription;
 class ASBReceiveResult {
-    constructor(result) {
+    constructor(result, encoder) {
         this.result = result;
+        this.encoder = encoder;
     }
     get didReceive() {
         //If it's not an array, return FALSE.
@@ -129,18 +131,19 @@ class ASBReceiveResult {
         //its a non empty array - therefore messages.
         return true;
     }
-    get messagesReceived() {
+    get messagesReceivedCount() {
         if (!Array.isArray(this.result)) {
             return 0;
         }
         //If it is an array, check its length property
         return this.result.length;
     }
-    getMessageBody(index) {
-        if (this.messagesReceived > index) {
-            return this.result[0].body;
+    getMessageBody() {
+        if (this.messagesReceivedCount > 0) {
+            var wholeMessage = this.result[0].body;
+            return this.encoder.unpackMessage(wholeMessage);
         }
-        throw new Error("getMessageBody called with Index higher than the number of returned messages");
+        throw new Error("getMessageBody when receive didnt get a message");
     }
 }
 exports.ASBReceiveResult = ASBReceiveResult;

@@ -1,5 +1,4 @@
 
-
 import fetch, * as f from "node-fetch";
 
 export { Response as FetchResponse } from "node-fetch";

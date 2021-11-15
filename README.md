@@ -117,7 +117,7 @@ This is a screen shot of run summary from Azure Devops:
 ![Screenshot of Test Run summary from Azure DevOps](./docs/PassingTestsInAzDo.png)
 
 and a list of tests:
-![Screenshot of test list in Azure DevOps](./docs/PassingTestListInAzDo.png)
+![Screenshot of test list in Azure DevOps](./docs/PassingTestsListInAzDo.png)
 ### Failing Test
 
 ![Screenshot of Passing Tests](./docs/FailingTest.png)

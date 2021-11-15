@@ -17,15 +17,36 @@ namespace TestEndpointContainer
         {
             try
             {
-                await context.Publish(new PaymentTakenEvent
+                var msg = context.Message;
+
+                if (msg.Amount > 1000_00)
                 {
-                    PaymentId = Guid.NewGuid(),
-                    ReservationId = context.Message.ReservationId,
-                    Amount = context.Message.Amount,
-                    Success = true
-                },
+                    await context.Publish(new PaymentRejectedEvent
+                    {
+                        PaymentId = Guid.NewGuid(),
+                        ReservationId = msg.ReservationId,
+                        Amount = msg.Amount,
+                        Success = false,
+                        Reason = "Payment too large"
+                    },
                     //forward on the same correlation id
-                    c => c.CorrelationId = context.CorrelationId);
+                    c => c.CorrelationId = context.CorrelationId) ;
+                }
+                else
+                {
+
+                    await context.Publish(new PaymentTakenEvent
+                    {
+                        PaymentId = Guid.NewGuid(),
+                        ReservationId = msg.ReservationId,
+                        Amount = msg.Amount,
+                        Success = true
+                    },
+                        //forward on the same correlation id
+                        c => c.CorrelationId = context.CorrelationId);
+                }
+
+
             }catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());

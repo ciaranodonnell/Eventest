@@ -11,5 +11,6 @@ namespace TestEndpointContainer
         public int ReservationId { get; set; }
         public string RequestCorrelationId { get; set; }
         public Reservation Reservation { get; set; }
+        public int ReservationLengthInDays { get; set; }
     }
 }

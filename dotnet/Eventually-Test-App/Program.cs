@@ -65,6 +65,8 @@ namespace TestEndpointContainer
                      {
                          x.AddConsumer<TakePaymentConsumer>();
                          x.AddConsumer<PaymentTakenConsumer>();
+                         x.AddConsumer<PaymentFailedConsumer>();
+                         
 
                          x.UsingAzureServiceBus((context, cfg) =>
                          {
@@ -93,8 +95,10 @@ namespace TestEndpointContainer
 
                              cfg.Message<TakePaymentCommand>(t => t.SetEntityName("takepayment"));
                              cfg.Message<PaymentTakenEvent>(t => t.SetEntityName("paymenttaken"));
+                             cfg.Message<PaymentRejectedEvent>(t => t.SetEntityName("paymentrejected"));
                              cfg.Message<NewReservationReceivedEvent>(t => t.SetEntityName("newreservationreceived"));
                              cfg.Message<ReservationConfirmedEvent>(t => t.SetEntityName("reservationconfirmed"));
+                             cfg.Message<ReservationRejectedEvent>(t => t.SetEntityName("reservationrejected"));
                          });
 
                      });

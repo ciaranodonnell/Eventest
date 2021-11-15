@@ -2,5 +2,6 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ActiveDebugProfile>Docker</ActiveDebugProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\wanna\source\GitHub\ciaranodonnell\Eventually\dotnet\Eventually-Test-App\Properties\PublishProfiles\eventuallyacr.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

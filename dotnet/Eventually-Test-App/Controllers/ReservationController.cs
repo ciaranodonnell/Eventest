@@ -45,6 +45,12 @@ namespace TestEndpointContainer.Controllers
             //var body = reader.ReadToEnd();
             //NewReservationRequest req = JsonConvert.DeserializeObject<NewReservationRequest>(body);
 
+            Guid? correlationId = null;
+            if (HttpContext.Request.Headers.TryGetValue("CorrelationId", out var corrIdString))
+            {
+                if (Guid.TryParse(corrIdString, out var parsedCorrId)) correlationId = parsedCorrId;
+            }
+
             var reservation = new Reservation();
             reservation.ReservationId = req.ReservationId;
             reservation.StartDate = req.StartDate;
@@ -53,20 +59,27 @@ namespace TestEndpointContainer.Controllers
             reservation.Status = "Received";
             reservationRepo.SaveReservation(reservation);
 
+            int reservationLengthInDays = Convert.ToInt32(reservation.EndDate.Date.Subtract(reservation.StartDate.Date).TotalDays);
+
+
             var evnt = new NewReservationReceivedEvent
             {
                 ReservationId = req.ReservationId,
                 Reservation = reservation,
+                ReservationLengthInDays = reservationLengthInDays,
                 RequestCorrelationId = req.RequestCorrelationId
             };
 
-            var correlationId = Guid.Parse(req.RequestCorrelationId);
+            if (correlationId is null)
+            {
+                correlationId = Guid.Parse(req.RequestCorrelationId);
+            }
 
             await injectedPublisher.Publish(evnt,
                 context => context.CorrelationId = correlationId);
 
-
-            await injectedPublisher.Publish(new TakePaymentCommand { Amount = 500 * 100, ReservationId = req.ReservationId },
+            
+            await injectedPublisher.Publish(new TakePaymentCommand { Amount = 50000 * reservationLengthInDays, ReservationId = req.ReservationId },
                 context => context.CorrelationId = correlationId);
 
 

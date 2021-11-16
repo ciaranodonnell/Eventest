@@ -1,7 +1,5 @@
-import * as Bus from "./BusTester";
-import { AzureServiceBusTester } from "./ASBTesting";
-import * as http from "./WebHelper";
-import { MassTransitMessageEncoder } from "./MessageEncoding";
+import {Broker, Subscription, ReceiveResult, http, MassTransitMessageEncoder, MessageEncoder}  from "eventest";
+import { AzureServiceBusTester } from "eventest.servicebus"
 
 import moment from 'moment';
 import "mocha";
@@ -17,12 +15,12 @@ dotenv.config();
 
 describe('Submitting NewReservationRequest', async () => {
 
-    var test: Bus.BusTester;
+    var test: Broker;
 
-    var NewReservationReceivedSubscription: Bus.Subscription;
-    var TakePaymentSubscription: Bus.Subscription;
-    var PaymentTakenSubscription: Bus.Subscription;
-    var ReservationConfirmedSubscription: Bus.Subscription;
+    var NewReservationReceivedSubscription: Subscription;
+    var TakePaymentSubscription: Subscription;
+    var PaymentTakenSubscription: Subscription;
+    var ReservationConfirmedSubscription: Subscription;
 
     var testReservationId = 123;
 

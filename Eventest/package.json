@@ -1,6 +1,6 @@
 {
   "name": "eventest",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "An end-to-end testing tool for Event Driven systems, allowing you to run full integration tests and await the events you expect to see as your business logic runs",
   "license": "MIT",
   "author": {
@@ -12,6 +12,7 @@
     "event driven architecture",
     "integration tests"
   ],
+  "type": "module",
   "main": "dist/index.js",
   "repository": {
     "type": "git",

@@ -1,10 +1,10 @@
 import * as asb from "@azure/service-bus";
-import { BusTester, Subscription, ReceiveResult , MessageEncoder, NoEncodingMessageEncoder } from "eventest";
+import { Broker, Subscription, ReceiveResult , MessageEncoder, NoEncodingMessageEncoder } from "eventest";
 
 
 import { v4 as uuid } from 'uuid';
 
-export class AzureServiceBusTester implements BusTester{
+export class AzureServiceBusTester implements Broker{
 
     private connectionString : string;
     private readonly correlationId : string;
@@ -34,6 +34,15 @@ export class AzureServiceBusTester implements BusTester{
         {
             this.messageEncoder = messageEncoder;
         }
+    }
+    
+    async sendAMessage(message: any, topicOrQueueName: string): Promise<void> {
+        const sender = this.sbClient.createSender(topicOrQueueName);
+        await sender.sendMessages(
+            { 
+                correlationId: this.testUniqueId, 
+                body: this.messageEncoder.packageMessage(message, this.testUniqueId)
+            });
     }
 
     get testUniqueId():string{
@@ -80,7 +89,7 @@ export class AzureServiceBusTester implements BusTester{
         
         for(var x=0;x< this.subsToCleanUp.length;x++){
             var sub = this.subsToCleanUp[x];
-            if (sub.topic === topic)
+            if (sub.topicName === topic)
             {
                 this.subsToCleanUp.splice(x,1);
                 x--;
@@ -105,7 +114,7 @@ export class AzureServiceBusTester implements BusTester{
         {
             var sub = this.subsToCleanUp.pop();
             if (sub ==null) break;
-            var deleteResponse = await this.admin.deleteSubscription(sub.topic, "testsub-" + this.correlationId); //, options);
+            var deleteResponse = await this.admin.deleteSubscription(sub.topicName, "testsub-" + this.correlationId); //, options);
         }
       
     }
@@ -123,7 +132,7 @@ export class ASBSubscription implements Subscription{
         this.messageEncoder = messageEncoder;
     }
 
-    get topic():string{
+    get topicName():string{
         return this.sub.topicName;
     }
 

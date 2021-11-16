@@ -1,9 +1,7 @@
-import * as Bus from "./BusTester";
-import { AzureServiceBusTester } from "./ASBTesting";
-import * as http from "./WebHelper";
-import { MassTransitMessageEncoder } from "./MessageEncoding";
+import {Broker, Subscription, ReceiveResult, http, MassTransitMessageEncoder, MessageEncoder}  from "eventest";
+import { AzureServiceBusTester } from "eventest.servicebus"
 
-import moment, { duration } from 'moment';
+import moment from 'moment';
 import "mocha";
 const { promisify } = require('util');
 
@@ -17,14 +15,14 @@ dotenv.config();
 
 describe('Submitting Expensive Reservation', async () => {
 
-    var test: Bus.BusTester;
+    var test: Broker;
 
-    var NewReservationReceivedSubscription: Bus.Subscription;
-    var TakePaymentSubscription: Bus.Subscription;
-    var PaymentTakenSubscription: Bus.Subscription;
-    var PaymentFailedSubscription: Bus.Subscription;
-    var ReservationConfirmedSubscription: Bus.Subscription;
-    var ReservationRejectedSubscription : Bus.Subscription;
+    var NewReservationReceivedSubscription: Subscription;
+    var TakePaymentSubscription: Subscription;
+    var PaymentTakenSubscription: Subscription;
+    var PaymentFailedSubscription: Subscription;
+    var ReservationConfirmedSubscription: Subscription;
+    var ReservationRejectedSubscription : Subscription;
 
     var testReservationId = 123;
 

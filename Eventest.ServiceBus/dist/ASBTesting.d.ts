@@ -1,6 +1,6 @@
 import * as asb from "@azure/service-bus";
-import { BusTester, Subscription, ReceiveResult, MessageEncoder } from "eventest";
-export declare class AzureServiceBusTester implements BusTester {
+import { Broker, Subscription, ReceiveResult, MessageEncoder } from "eventest";
+export declare class AzureServiceBusTester implements Broker {
     private connectionString;
     private readonly correlationId;
     private readonly admin;
@@ -8,6 +8,7 @@ export declare class AzureServiceBusTester implements BusTester {
     private subsToCleanUp;
     private readonly messageEncoder;
     constructor(connectionString: string, messageEncoder: MessageEncoder | undefined);
+    sendAMessage(message: any, topicOrQueueName: string): Promise<void>;
     get testUniqueId(): string;
     /**
      * Creates a filtered Subscription to the topic. It generates the name of the subscription and adds
@@ -25,7 +26,7 @@ export declare class ASBSubscription implements Subscription {
     private readonly client;
     private readonly messageEncoder;
     constructor(client: asb.ServiceBusClient, sub: asb.SubscriptionProperties, messageEncoder: MessageEncoder);
-    get topic(): string;
+    get topicName(): string;
     waitForMessage(timeoutInMS: number): Promise<ReceiveResult>;
 }
 export declare class ASBReceiveResult implements ReceiveResult {

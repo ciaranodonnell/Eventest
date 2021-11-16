@@ -39,6 +39,13 @@ class AzureServiceBusTester {
             this.messageEncoder = messageEncoder;
         }
     }
+    async sendAMessage(message, topicOrQueueName) {
+        const sender = this.sbClient.createSender(topicOrQueueName);
+        await sender.sendMessages({
+            correlationId: this.testUniqueId,
+            body: this.messageEncoder.packageMessage(message, this.testUniqueId)
+        });
+    }
     get testUniqueId() {
         return this.correlationId;
     }
@@ -73,7 +80,7 @@ class AzureServiceBusTester {
         var deleteResponse = await this.admin.deleteSubscription(topic, "testsub-" + this.correlationId); //, options);
         for (var x = 0; x < this.subsToCleanUp.length; x++) {
             var sub = this.subsToCleanUp[x];
-            if (sub.topic === topic) {
+            if (sub.topicName === topic) {
                 this.subsToCleanUp.splice(x, 1);
                 x--;
             }
@@ -92,7 +99,7 @@ class AzureServiceBusTester {
             var sub = this.subsToCleanUp.pop();
             if (sub == null)
                 break;
-            var deleteResponse = await this.admin.deleteSubscription(sub.topic, "testsub-" + this.correlationId); //, options);
+            var deleteResponse = await this.admin.deleteSubscription(sub.topicName, "testsub-" + this.correlationId); //, options);
         }
     }
 }
@@ -103,7 +110,7 @@ class ASBSubscription {
         this.client = client;
         this.messageEncoder = messageEncoder;
     }
-    get topic() {
+    get topicName() {
         return this.sub.topicName;
     }
     async waitForMessage(timeoutInMS) {

@@ -15,6 +15,8 @@ In an e-commerce example: It would be useful to test that putting a new Order in
 
 Eventest contains a set of components to make testing for these conditions as simple as writing a Unit Test.
 
+The basic assumption of the package is that you're system follows the good (perhaps best) practice of propagating the Correlation Id from the initial request or message through all the subsequent requests, responses, and messages.
+
 # Components
 
 There are 2 different sections to the library at the moment:

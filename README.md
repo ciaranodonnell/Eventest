@@ -1,6 +1,8 @@
-# Eventest
+# Evenest
 
-The purpose of this library is to serve as a demonstration of how to run end to end tests for Event Driven Systems.
+The purpose of this library is to enable a simple route to run end to end tests for Event Driven Systems.
+
+The name is a portmanteau of Event and Test.
 
 When creating web applications that have asynchronous backend systems it can be very challenging to test those backends.
 In an e-commerce example: It would be useful to test that putting a new Order into the Order Service causes:
@@ -11,6 +13,10 @@ In an e-commerce example: It would be useful to test that putting a new Order in
 4. Payment Service issues ```Payment Taken Event```
 5. Reservation Service issues a ```ReservationConfirmed``` event
 
+Eventest contains a set of components to make testing for these conditions as simple as writing a Unit Test.
+
+# Components
+
 
 ## Example of use of this library:
 
@@ -18,7 +24,7 @@ This library uses Mocha to run these tests like unit tests. Example code:
 ``` typescript
  describe('Submitting NewReservationRequest', async () => {
 
-    var test: Bus.BusTester;
+    var test: Bus.Bus;
 
     var NewReservationReceivedSubscription: Bus.Subscription;
     var TakePaymentSubscription: Bus.Subscription;

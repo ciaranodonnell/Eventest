@@ -1,6 +1,8 @@
-# Eventest
+# Evenest
 
-The purpose of this library is to serve as a demonstration of how to run end to end tests for Event Driven Systems.
+The purpose of this library is to enable a simple route to run end to end tests for Event Driven Systems.
+
+The name is a portmanteau of Event and Test.
 
 When creating web applications that have asynchronous backend systems it can be very challenging to test those backends.
 In an e-commerce example: It would be useful to test that putting a new Order into the Order Service causes:
@@ -11,6 +13,42 @@ In an e-commerce example: It would be useful to test that putting a new Order in
 4. Payment Service issues ```Payment Taken Event```
 5. Reservation Service issues a ```ReservationConfirmed``` event
 
+Eventest contains a set of components to make testing for these conditions as simple as writing a Unit Test.
+
+# Components
+
+There are 2 different sections to the library at the moment:
+
+## Broker
+
+The Broker abstraction is the core part of the abstraction that allows you listen for, or publish, events and commands in your tests.
+The Broker interface is the common abstraction, which concrete implementations given in dependent libraries that allows you to run against
+real brokers, e.g. ```eventest.servicebus``` which wraps Azure Service Bus with this instance.
+
+Each test group should create a Broker instance. The Broker then creates a unique Id for the test run, which is used when subscribing to messages.
+This test Id will be used as the CorrelationId for all messages that the Broker sends, and all subscriptions that are issued against the broker will be filtered to only raise messages that have that Correlation Id.
+This means your tests will run independently in terms of messaging and wont get false postivites/negatives because they received unrelated messages.
+
+You can send messages, Commands or Events, to the system through the ``` sendAMessage(message:any, topicOrQueueName:string) : Promise<void>;``` method.
+
+### Subscriptions
+
+To subscribe to a messaging topics, the Broker has a ```subscribeToTopic(topicName:string) : Promise<Subscription>``` method.
+This Subscription will be filtered to only receive messages from this test. 
+
+Once you have a ```Subscription``` object you can wait for messages to be delivered to that subscription.
+The method ```waitForMessage(timeoutInMS: number): Promise<ReceiveResult>``` will wait up to the timeout for a message to arrive.
+The method definitely returns a ```ReceivedResult``` object which enables you to determine whether a message arrived. 
+
+### ReceiveResult
+
+The ```ReceiveResult``` is returned by the ```waitForMessage(timeoutInMS: number): Promise<ReceiveResult>``` on a ```Subscription```.
+You should check the ```didReceive``` property to check if a message was actually received.
+If that property returns true you can call the ```getMessageBody(): any``` to get the contents of the message.
+
+## Http Abstraction
+
+There is an ```http``` abstraction too. 
 
 ## Example of use of this library:
 
@@ -18,7 +56,7 @@ This library uses Mocha to run these tests like unit tests. Example code:
 ``` typescript
  describe('Submitting NewReservationRequest', async () => {
 
-    var test: Bus.BusTester;
+    var test: Bus.Broker;
 
     var NewReservationReceivedSubscription: Bus.Subscription;
     var TakePaymentSubscription: Bus.Subscription;
@@ -112,14 +150,14 @@ This library uses Mocha to run these tests like unit tests. Example code:
 
 ### Passing Tests:
 When running locally on a console window (shown here in powershell):
-![Screenshot of Passing Tests run in Powershell](./docs/PassingTests.png)
+![Screenshot of Passing Tests run in Powershell](/Eventest/docs/PassingTests.png)
 
 It's also possible to run these as a CI/CD pipeline, perhaps after you've done an automated deployment of your application.
 This is a screen shot of run summary from Azure Devops:
-![Screenshot of Test Run summary from Azure DevOps](./docs/PassingTestsInAzDo.png)
+![Screenshot of Test Run summary from Azure DevOps](/Eventest/docs/PassingTestsInAzDo.png)
 
 and a list of tests:
-![Screenshot of test list in Azure DevOps](./docs/PassingTestsListInAzDo.png)
+![Screenshot of test list in Azure DevOps](/Eventest/docs/PassingTestsListInAzDo.png)
 ### Failing Test
 
-![Screenshot of Passing Tests](./docs/FailingTest.png)
+![Screenshot of Passing Tests](/Eventest/docs/FailingTest.png)

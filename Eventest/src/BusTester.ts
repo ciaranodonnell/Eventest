@@ -1,34 +1,65 @@
 
 /**
- * The general shape of a message encoder
+ * A standard interface abstraction of a message broker. To test your system
+ * you will need to create an instance concrete implementation of this interface
  */
- export declare interface BusTester {
+export declare interface Broker {
+
+    get testUniqueId(): string;
+
     /**
      * Subscribes to a topic on the Bus. This subscription will be filtered based on a correlation Id generated for this test
      *
      * @param topicName - The Topic you want to subscribe to
      */
-     subscribeToTopic(topicName : string) : Promise<Subscription>;
-    
-     get testUniqueId():string;
+    subscribeToTopic(topicName: string): Promise<Subscription>;
 
-     closeSubscription(topic:string) : Promise<void>;
+    /**
+     * Sends a message to the Topic / Queue. Uses a configured MessageEncoder to format the message into an envelope
+     * @param message The message that you want to send
+     * @param topicOrQueueName The name of the topic or queue you want to send it to.
+     */
+    sendAMessage(message:any, topicOrQueueName:string) : Promise<void>;
 
-     cleanup():Promise<void>;
+    /**
+     * Cleans up the subscriptions made by this test.
+     */
+    cleanup(): Promise<void>;
 }
 
-export declare interface Subscription{
-    get topic():string;
+/**
+ * A standard interface abstraction of a subscription to a message broker topic or queue. 
+ * These are returned from Broker.subscribeToTopic.
+ */
+export declare interface Subscription {
 
-    waitForMessage(timeoutInMS:number) : Promise<ReceiveResult>;
+    /**
+     * The name of the topic this subscription is connected to
+     */
+    get topicName(): string;
+
+    /**
+     * Attempts to receive a single message from the subscription. 
+     * Typically these will be destructive reads so calling this 
+     * repeatedly should return different messages
+     * @param timeoutInMS - How long to wait for a message to arrive on the subscription
+     */
+    waitForMessage(timeoutInMS: number): Promise<ReceiveResult>;
 
 }
 
-export declare interface ReceiveResult{
+/**
+ * The result of a waitForMessage operation on a subscription
+ */
+export declare interface ReceiveResult {
 
-    get didReceive ():boolean;
+    /**
+     * returns true if the read operation got a message. false if it returned because it timed out
+     */
+    get didReceive(): boolean;
 
-    get messagesReceivedCount():number;
-
-    getMessageBody():any;
+    /**
+     * Gets the unpacked body of the message that was received
+     */
+    getMessageBody(): any;
 }

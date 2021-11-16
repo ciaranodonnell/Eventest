@@ -116,7 +116,7 @@ When running locally on a console window (shown here in powershell):
 
 It's also possible to run these as a CI/CD pipeline, perhaps after you've done an automated deployment of your application.
 This is a screen shot of run summary from Azure Devops:
-![Screenshot of Test Run summary from Azure DevOps](eventest/docs/PassingTestsInAzDo.png)
+![Screenshot of Test Run summary from Azure DevOps](/eventest/docs/PassingTestsInAzDo.png)
 
 and a list of tests:
 ![Screenshot of test list in Azure DevOps](eventest/docs/PassingTestsListInAzDo.png)

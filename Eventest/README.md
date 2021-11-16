@@ -1,4 +1,4 @@
-# Evenest
+# Eventest
 
 The purpose of this library is to enable a simple route to run end to end tests for Event Driven Systems.
 
@@ -48,7 +48,26 @@ If that property returns true you can call the ```getMessageBody(): any``` to ge
 
 ## Http Abstraction
 
-There is an ```http``` abstraction too. 
+There is an ```http``` abstraction too.
+This can be used to post to and from the HTTP endpoints in your systems as triggers for event flows.
+
+### Posting to a REST web service
+
+The method ```postToService(address: string, bodyData: any, headers?: any): Promise<Response>``` allows you to post an object to a service. 
+Just pass the address, the object to POST, and any headers you want send to the method.
+
+### Getting from a web service
+
+The method ```getFromService(address: string, headers?: any): Promise<Response>``` allows you to perform a GET operation against a web service. 
+Just pass the address and any headers you want include in the request to the method.
+
+### Handling Responses
+
+The ```Response``` class is returned from these web methods and allows you to access the response from the server.
+- The ```success``` property returns ```true``` if the servies returns a status code between 200 and 299.
+- The ```statusCode``` property returns the actual status code that the service returned.
+- The ```body``` property returns the contents of the response deserialized into an object.
+- The ```result``` property returns the original ```fetch()``` response.
 
 ## Example of use of this library:
 

@@ -112,14 +112,14 @@ This library uses Mocha to run these tests like unit tests. Example code:
 
 ### Passing Tests:
 When running locally on a console window (shown here in powershell):
-![Screenshot of Passing Tests run in Powershell](./eventest/docs/PassingTests.png)
+![Screenshot of Passing Tests run in Powershell](eventest/docs/PassingTests.png)
 
 It's also possible to run these as a CI/CD pipeline, perhaps after you've done an automated deployment of your application.
 This is a screen shot of run summary from Azure Devops:
-![Screenshot of Test Run summary from Azure DevOps](./eventest/docs/PassingTestsInAzDo.png)
+![Screenshot of Test Run summary from Azure DevOps](eventest/docs/PassingTestsInAzDo.png)
 
 and a list of tests:
-![Screenshot of test list in Azure DevOps](./eventest/docs/PassingTestsListInAzDo.png)
+![Screenshot of test list in Azure DevOps](eventest/docs/PassingTestsListInAzDo.png)
 ### Failing Test
 
-![Screenshot of Passing Tests](./eventest/docs/FailingTest.png)
+![Screenshot of Passing Tests](eventest/docs/FailingTest.png)

@@ -1,8 +1,6 @@
-# Eventest
+# Eventually
 
-The purpose of this library is to enable a simple route to run end to end tests for Event Driven Systems.
-
-The name is a portmanteau of Event and Test.
+The purpose of this library is to serve as a demonstration of how to run end to end tests for Event Driven Systems.
 
 When creating web applications that have asynchronous backend systems it can be very challenging to test those backends.
 In an e-commerce example: It would be useful to test that putting a new Order into the Order Service causes:
@@ -13,53 +11,55 @@ In an e-commerce example: It would be useful to test that putting a new Order in
 4. Payment Service issues ```Payment Taken Event```
 5. Reservation Service issues a ```ReservationConfirmed``` event
 
-Eventest contains a set of components to make testing for these conditions as simple as writing a Unit Test.
-
-# Components
-
 
 ## Example of use of this library:
 
-This library uses Mocha to run these tests like unit tests. Example code:
+This library uses Mocha to run these tests like unit tests. 
+[Our examples](/Examples/src/) are already stored in this repository.
+
+Example code:
+
 ``` typescript
- describe('Submitting NewReservationRequest', async () => {
+ 
+describe('Submitting NewReservationRequest', async () => {
 
-    var test: Bus.Bus;
+    let test: Broker;
 
-    var NewReservationReceivedSubscription: Bus.Subscription;
-    var TakePaymentSubscription: Bus.Subscription;
-    var PaymentTakenSubscription: Bus.Subscription;
-    var ReservationConfirmedSubscription: Bus.Subscription;
+    let newReservationReceivedSubscription: Subscription;
+    let takePaymentSubscription: Subscription;
+    let paymentTakenSubscription: Subscription;
+    let reservationConfirmedSubscription: Subscription;
 
-    var testReservationId = 123;
+    const testReservationId = 123;
 
     before(async () => {
         // runs once before the first test in this block
 
-        //Create a Service Bus connection for this test
+        // Create a Service Bus connection for this test
         test = new AzureServiceBusTester(
-            process.env.SERVICEBUS_CONNECTION_STRING ?? "",
+            process.env.SERVICEBUS_CONNECTION_STRING ?? '',
             new MassTransitMessageEncoder()
         );
 
-        //Subscribe to the topic first so we dont miss the messages
-        NewReservationReceivedSubscription = await test.subscribeToTopic("newreservationreceived");
-        TakePaymentSubscription = await test.subscribeToTopic("takepayment");
-        PaymentTakenSubscription = await test.subscribeToTopic("paymenttaken");
-        ReservationConfirmedSubscription = await test.subscribeToTopic("reservationconfirmed");
+        // Subscribe to the topic first so we dont miss the messages
+        newReservationReceivedSubscription = await test.subscribeToTopic('newreservationreceived');
+        takePaymentSubscription = await test.subscribeToTopic('takepayment');
+        paymentTakenSubscription = await test.subscribeToTopic('paymenttaken');
+        reservationConfirmedSubscription = await test.subscribeToTopic('reservationconfirmed');
 
-        //give it a couple of seconds to make sure the subscriptions are active
+        // give it a couple of seconds to make sure the subscriptions are active
         delay(2000);
     });
 
     it('should get OK status', async () => {
-        var svcResponse = await http.postToService(process.env.SUBMIT_RESERVATION_SERVICE_ENDPOINT ?? "",
-        //This is the payload to send to the service:
+        const svcResponse = await http.postToService(
+            process.env.SUBMIT_RESERVATION_SERVICE_ENDPOINT ?? '',
+         // This is the payload to send to the service:
             {
                 RequestCorrelationId: test.testUniqueId,
                 ReservationId: testReservationId,
                 StartDate: moment().format('YYYY-MM-DDTHH:mm:ss'),
-                EndDate: moment().add("2","days").format('YYYY-MM-DDTHH:mm:ss'),
+                EndDate: moment().add('2','days').format('YYYY-MM-DDTHH:mm:ss'),
                 GuestId: 123
             });
         // test that we got a 200 success
@@ -67,46 +67,50 @@ This library uses Mocha to run these tests like unit tests. Example code:
     });
 
     it('should publish NewReservationEvent', async () => {
-        //wait up to 2 seconds to receive a message on our subscription
-        var receivedMessage = await NewReservationReceivedSubscription.waitForMessage(2000);
-        //test we got a message
+        // wait up to 2 seconds to receive a message on our subscription
+        const receivedMessage = await newReservationReceivedSubscription.waitForMessage(2000);
+        // test we got a message
         expect(receivedMessage.didReceive).equal(true);
-        //test the reservation Id matches
+        // test the reservation Id matches
         expect(receivedMessage.getMessageBody().reservationId).equal(testReservationId);
     });
 
     it('should return the Reservation', async () => {
-        var result = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
+        const result = await http.getFromService(
+            (process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? '')
+        + '?reservationId=' + testReservationId);
         expect(result.success).equal(true);
     });
 
     it('should publish Take Payment Command', async () => {
-        var receivedMessage = await TakePaymentSubscription.waitForMessage(2000);
+        const receivedMessage = await takePaymentSubscription.waitForMessage(2000);
         expect(receivedMessage.didReceive).equal(true);
     });
 
     it('should publish Payment Taken Event', async () => {
-        var receivedMessage = await PaymentTakenSubscription.waitForMessage(2000);
+        const receivedMessage = await paymentTakenSubscription.waitForMessage(2000);
         expect(receivedMessage.didReceive).to.equal(true);
     });
 
     it('should publish ReservationConfirmed event', async () => {
-        var receivedMessage = await ReservationConfirmedSubscription.waitForMessage(2000);
+        const receivedMessage = await reservationConfirmedSubscription.waitForMessage(2000);
         expect(receivedMessage.didReceive).equal(true);
     });
 
     it('should return the Reservation as State=Confirmed', async () => {
-        var result = await http.getFromService((process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? "") + "?reservationId=" + testReservationId);
-        //test we got a 200 level response
+        const result = await http.getFromService(
+            (process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? '')
+            + '?reservationId=' + testReservationId);
+        // test we got a 200 level response
         expect(result.success).equal(true);
-        //test that the object in the body had a field called status with a value = 'Confirmed'
-        expect(result.body.Status).equal("Confirmed");
+        // test that the object in the body had a field called status with a value = 'Confirmed'
+        expect(result.body.Status).equal('Confirmed');
 
     });
 
-    //Clean up after all the tests
+    // Clean up after all the tests
     after(async () => {
-      //this removes all the subscriptions we made
+      // this removes all the subscriptions we made
       test.cleanup();
     });
 });

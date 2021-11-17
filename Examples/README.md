@@ -1,4 +1,4 @@
-# Eventually
+# Eventest Examples
 
 The purpose of this library is to serve as a demonstration of how to run end to end tests for Event Driven Systems.
 
@@ -15,7 +15,8 @@ In an e-commerce example: It would be useful to test that putting a new Order in
 ## Example of use of this library:
 
 This library uses Mocha to run these tests like unit tests. 
-[Our examples](/Examples/src/) are already stored in this repository 
+[Our examples](/Examples/src/) are already stored in this repository.
+
 Example code:
 
 ``` typescript

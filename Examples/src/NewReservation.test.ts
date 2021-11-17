@@ -1,16 +1,19 @@
-import {Broker, Subscription, ReceiveResult, http, MassTransitMessageEncoder, MessageEncoder}  from '../../Eventest';
+import {Broker, Subscription, ReceiveResult, http, MassTransitMessageEncoder, MessageEncoder}  from 'Eventest';
 import { AzureServiceBusTester } from 'Eventest.ServiceBus'
 
-import moment from 'moment';
 import 'mocha';
-import {promisify } from 'util';
-
-const delay = promisify(setTimeout);
-
-// Load the .env file if it exists
-import * as dotenv from 'dotenv';
 import { expect } from 'chai';
 
+// This is a cool library to work with dates and times
+import moment from 'moment';
+
+// This allows us to await timeouts
+import {promisify } from 'util';
+const delay = promisify(setTimeout);
+
+// simple setup of environment variables for the tests
+import * as dotenv from 'dotenv';
+// Load the .env file if it exists
 dotenv.config();
 
 describe('Submitting NewReservationRequest', async () => {

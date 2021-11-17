@@ -14,15 +14,42 @@ In an e-commerce example: It would be useful to test that putting a new Order in
 
 ## Example of use of this library:
 
-This library uses Mocha to run these tests like unit tests. 
-[Our examples](/Examples/src/) are already stored in this repository.
+The example test scripts have been written to run against the application thats hosted at [https://github.com/ciaranodonnell/eventest.testservices](https://github.com/ciaranodonnell/eventest.testservices).
+This test application is a container that has REST endpoints and publishes and subscribes to Azure Service Bus.
 
-Example code:
+To write these tests we import our Eventtest package
+``` TypeScript
+import {Broker, Subscription, ReceiveResult, http, MassTransitMessageEncoder, MessageEncoder}  from 'Eventest';
+import { AzureServiceBusTester } from 'Eventest.ServiceBus'
+
+```
+
+We then bring in ```mocha``` and ```chai``` to do tests, plus some other utilities to get them working. 
+``` TypeScript
+import 'mocha';
+import { expect } from 'chai';
+
+// This is a cool library to work with dates and times
+import moment from 'moment';
+
+// This allows us to await timeouts
+import {promisify } from 'util';
+const delay = promisify(setTimeout);
+
+// simple setup of environment variables for the tests
+import * as dotenv from 'dotenv';
+// Load the .env file if it exists
+dotenv.config();
+
+```
+
+Once we have that setup, we can write our actual test:
 
 ``` typescript
  
 describe('Submitting NewReservationRequest', async () => {
 
+    // create variables for our test state
     let test: Broker;
 
     let newReservationReceivedSubscription: Subscription;

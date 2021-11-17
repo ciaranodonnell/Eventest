@@ -1,25 +1,13 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Response = exports.getFromService = exports.postToService = exports.FetchResponse = void 0;
-const node_fetch_1 = __importDefault(require("node-fetch"));
-var node_fetch_2 = require("node-fetch");
-Object.defineProperty(exports, "FetchResponse", { enumerable: true, get: function () { return node_fetch_2.Response; } });
-async function postToService(address, bodyData, headers) {
+import axios from "axios";
+export async function postToService(address, bodyData, headers) {
     try {
         var payload = JSON.stringify(bodyData);
         if (headers == undefined)
             headers = {};
         headers['Accept'] = 'application/json';
         headers['Content-Type'] = 'application/json';
-        var httpResult = await (0, node_fetch_1.default)(address, {
-            method: "POST",
-            headers: headers,
-            body: payload
-        });
-        return new Response(httpResult, await httpResult.json());
+        var httpResult = await axios.post(address, bodyData, { headers: headers });
+        return new Response(httpResult, await httpResult.data);
     }
     catch (e) {
         console.log("Error called New Reservation API");
@@ -27,16 +15,15 @@ async function postToService(address, bodyData, headers) {
     }
     return new Response(undefined, undefined);
 }
-exports.postToService = postToService;
-async function getFromService(address, headers) {
+export async function getFromService(address, headers) {
     try {
         if (headers == undefined)
             headers = {};
         headers['Accept'] = 'application/json';
-        var httpResult = await (0, node_fetch_1.default)(address, {
-            method: "GET", headers: headers
+        var httpResult = await axios.get(address, {
+            headers: headers
         });
-        let theResponse = new Response(httpResult, JSON.parse(await httpResult.blob.toString()));
+        let theResponse = new Response(httpResult, JSON.parse(await httpResult.data.toString()));
         return theResponse;
     }
     catch (e) {
@@ -45,8 +32,7 @@ async function getFromService(address, headers) {
     }
     return new Response(undefined, undefined);
 }
-exports.getFromService = getFromService;
-class Response {
+export class Response {
     constructor(result, body) {
         if (result == undefined) {
             this.didSuceed = false;
@@ -77,5 +63,4 @@ class Response {
         return (_b = (_a = this.theResult) === null || _a === void 0 ? void 0 : _a.status) !== null && _b !== void 0 ? _b : 0;
     }
 }
-exports.Response = Response;
 //# sourceMappingURL=WebHelper.js.map

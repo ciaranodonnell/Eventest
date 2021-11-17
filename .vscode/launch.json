@@ -1,11 +1,17 @@
 {
     "version": "0.2.0",
     "configurations": [
-        {
-            "name": "Attach to .NET Functions",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:azureFunctions.pickProcess}"
-        }
+        {            
+            "type": "node",            
+            "request": "launch",            
+            "name": "Mocha all tests",            
+            "program": "${workspaceFolder}/Examples/node_modules/mocha/bin/_mocha",            
+            "args": [                
+               "${workspaceRoot}/Examples/src/**/*.test.ts"            
+            ],            
+            "cwd": "${workspaceRoot}/Examples",   
+            "internalConsoleOptions": "openOnSessionStart"        
+         }
+         
     ]
 }

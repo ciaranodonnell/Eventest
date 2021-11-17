@@ -2,8 +2,9 @@
   "compilerOptions": {
     "target": "ES2018",
     "module": "commonjs",
+    "lib":["ES2017"],
     "declaration": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -11,9 +12,11 @@
     "alwaysStrict": true,
     "outDir": "dist",
     "rootDir": "src",
-    "sourceMap": true
+    "inlineSourceMap": true
   },
   "include": [
-    "src/**.ts"
+    "scripts/**/*.ts", 
+    "src/**/*.ts", 
+    "node_modules/lodash-es/**/*.js"
   ]
 }

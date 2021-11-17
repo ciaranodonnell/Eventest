@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MassTransitMessageEncoder = void 0;
-const uuid_1 = require("uuid");
+import { v4 as uuid } from 'uuid';
 const HOSTNAME = require("os").hostname;
 const PID = require("process").pid;
-class MassTransitMessageEncoder {
+export class MassTransitMessageEncoder {
     packageMessage(message, correlationId) {
         var result = {
             conversationId: correlationId,
-            messageId: (0, uuid_1.v4)(),
+            messageId: uuid(),
             message: message,
             "messageType": [
                 "urn:message:type"
@@ -33,5 +30,4 @@ class MassTransitMessageEncoder {
         return brokerMessage.message;
     }
 }
-exports.MassTransitMessageEncoder = MassTransitMessageEncoder;
 //# sourceMappingURL=MessageEncoding.MassTransit.js.map

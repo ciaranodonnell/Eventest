@@ -1,24 +1,17 @@
 
-import fetch, * as f from "node-fetch";
-
-export { Response as FetchResponse } from "node-fetch";
+import axios, { Axios } from "axios";
+import {AxiosResponse} from "axios";
 
 export async function postToService(address: string, bodyData: any, headers?: any): Promise<Response> {
     try {
         var payload = JSON.stringify(bodyData);
 
         if (headers == undefined) headers = {};
-
         headers['Accept'] = 'application/json';
         headers['Content-Type'] = 'application/json';
 
-        var httpResult = await fetch(address,
-            {
-                method: "POST",
-                headers: headers,
-                body: payload
-            });
-        return new Response(httpResult, await httpResult.json());
+        var httpResult = await axios.post(address, bodyData, { headers:headers })
+        return new Response(httpResult, await httpResult.data);
 
     } catch (e) {
         console.log("Error called New Reservation API")
@@ -34,11 +27,12 @@ export async function getFromService(address: string, headers?: any): Promise<Re
 
         headers['Accept'] = 'application/json';
 
-        var httpResult = await fetch(address,
+        var httpResult = await axios.get(address,
             {
-                method: "GET", headers: headers
+                headers: headers
             });
-        let theResponse = new Response(httpResult, JSON.parse(await httpResult.blob.toString()));
+            
+        let theResponse = new Response(httpResult, JSON.parse(await httpResult.data.toString()));
         return theResponse;
 
     } catch (e) {
@@ -50,10 +44,10 @@ export async function getFromService(address: string, headers?: any): Promise<Re
 
 export class Response {
     private didSuceed: boolean
-    private theResult: f.Response | undefined
+    private theResult: AxiosResponse | undefined
     private bodyObject: any
 
-    constructor(result: f.Response | undefined, body: any) {
+    constructor(result: AxiosResponse | undefined, body: any) {
         if (result == undefined) {
             this.didSuceed = false;
         }else{
@@ -75,7 +69,7 @@ export class Response {
             return undefined;
         }
     }
-    get result(): f.Response | undefined {
+    get result(): AxiosResponse | undefined {
         return this.theResult;
     }
     get statusCode(): number {

@@ -1,39 +1,17 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ASBReceiveResult = exports.ASBSubscription = exports.AzureServiceBusTester = void 0;
-const asb = __importStar(require("@azure/service-bus"));
-const eventest_1 = require("eventest");
-const uuid_1 = require("uuid");
-class AzureServiceBusTester {
+import * as asb from "@azure/service-bus";
+import { NoEncodingMessageEncoder } from "eventest";
+import { v4 as uuid } from 'uuid';
+export class AzureServiceBusTester {
     constructor(connectionString, messageEncoder) {
         this.connectionString = connectionString;
-        this.correlationId = (0, uuid_1.v4)();
+        this.correlationId = uuid();
         this.subsToCleanUp = [];
         // You can also use AAD credentials from `@azure/identity` along with the host url
         // instead of the connection string for authentication.
         this.admin = new asb.ServiceBusAdministrationClient(connectionString);
         this.sbClient = new asb.ServiceBusClient(connectionString);
         if (messageEncoder == undefined) {
-            this.messageEncoder = new eventest_1.NoEncodingMessageEncoder();
+            this.messageEncoder = new NoEncodingMessageEncoder();
         }
         else {
             this.messageEncoder = messageEncoder;
@@ -103,8 +81,7 @@ class AzureServiceBusTester {
         }
     }
 }
-exports.AzureServiceBusTester = AzureServiceBusTester;
-class ASBSubscription {
+export class ASBSubscription {
     constructor(client, sub, messageEncoder) {
         this.sub = sub;
         this.client = client;
@@ -119,8 +96,7 @@ class ASBSubscription {
         return new ASBReceiveResult(messageResult, this.messageEncoder);
     }
 }
-exports.ASBSubscription = ASBSubscription;
-class ASBReceiveResult {
+export class ASBReceiveResult {
     constructor(result, encoder) {
         this.result = result;
         this.encoder = encoder;
@@ -153,5 +129,4 @@ class ASBReceiveResult {
         throw new Error("getMessageBody when receive didnt get a message");
     }
 }
-exports.ASBReceiveResult = ASBReceiveResult;
 //# sourceMappingURL=ASBTesting.js.map

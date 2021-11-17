@@ -1,27 +1,30 @@
-import {Broker, Subscription, ReceiveResult, http, MassTransitMessageEncoder, MessageEncoder}  from 'eventest';
-import { AzureServiceBusTester } from 'eventest.servicebus'
+import { Broker, Subscription, ReceiveResult, http, MassTransitMessageEncoder, MessageEncoder } from 'Eventest';
+import { AzureServiceBusTester } from 'Eventest.ServiceBus'
 
 import moment from 'moment';
 import 'mocha';
-import {promisify } from 'util';
+import { promisify } from 'util';
 
 const delay = promisify(setTimeout);
 
 // Load the .env file if it exists
 import * as dotenv from 'dotenv';
 import { expect } from 'chai';
+import { Console } from 'console';
 
 dotenv.config();
 
-describe('Submitting Expensive Reservation', async () => {
+
+
+
+describe('Submitting NewReservationRequest', async () => {
 
     let test: Broker;
 
     let newReservationReceivedSubscription: Subscription;
     let takePaymentSubscription: Subscription;
     let paymentTakenSubscription: Subscription;
-    let paymentFailedSubscription: Subscription;
-    let reservationRejectedSubscription : Subscription;
+    let reservationConfirmedSubscription: Subscription;
 
     const testReservationId = 123;
 
@@ -38,8 +41,7 @@ describe('Submitting Expensive Reservation', async () => {
         newReservationReceivedSubscription = await test.subscribeToTopic('newreservationreceived');
         takePaymentSubscription = await test.subscribeToTopic('takepayment');
         paymentTakenSubscription = await test.subscribeToTopic('paymenttaken');
-        paymentFailedSubscription = await test.subscribeToTopic('paymentrejected');
-        reservationRejectedSubscription = await test.subscribeToTopic('reservationrejected');
+        reservationConfirmedSubscription = await test.subscribeToTopic('reservationconfirmed');
 
         // give it a couple of seconds to make sure the subscriptions are active
         delay(2000);
@@ -48,13 +50,12 @@ describe('Submitting Expensive Reservation', async () => {
     it('should get OK status', async () => {
         const svcResponse = await http.postToService(
             process.env.SUBMIT_RESERVATION_SERVICE_ENDPOINT ?? '',
-        // This is the payload to send to the service:
+            // This is the payload to send to the service:
             {
                 RequestCorrelationId: test.testUniqueId,
                 ReservationId: testReservationId,
                 StartDate: moment().format('YYYY-MM-DDTHH:mm:ss'),
-                // Making the reservation last 100 days makes it too expensive
-                EndDate: moment().add('100', 'days').format('YYYY-MM-DDTHH:mm:ss'),
+                EndDate: moment().add('2', 'days').format('YYYY-MM-DDTHH:mm:ss'),
                 GuestId: 123
             });
         // test that we got a 200 success
@@ -73,7 +74,7 @@ describe('Submitting Expensive Reservation', async () => {
     it('should return the Reservation', async () => {
         const result = await http.getFromService(
             (process.env.GET_RESERVATION_SERVICE_ENDPOINT ?? '')
-        + '?reservationId=' + testReservationId);
+            + '?reservationId=' + testReservationId);
         expect(result.success).equal(true);
     });
 
@@ -82,13 +83,13 @@ describe('Submitting Expensive Reservation', async () => {
         expect(receivedMessage.didReceive).equal(true);
     });
 
-    it('should publish Payment Rejected Event', async () => {
-        const receivedMessage = await paymentFailedSubscription.waitForMessage(2000);
+    it('should publish Payment Taken Event', async () => {
+        const receivedMessage = await paymentTakenSubscription.waitForMessage(2000);
         expect(receivedMessage.didReceive).to.equal(true);
     });
 
-    it('should publish Reservation Rejected event', async () => {
-        const receivedMessage = await reservationRejectedSubscription.waitForMessage(2000);
+    it('should publish ReservationConfirmed event', async () => {
+        const receivedMessage = await reservationConfirmedSubscription.waitForMessage(2000);
         expect(receivedMessage.didReceive).equal(true);
     });
 
@@ -98,14 +99,14 @@ describe('Submitting Expensive Reservation', async () => {
             + '?reservationId=' + testReservationId);
         // test we got a 200 level response
         expect(result.success).equal(true);
-        // test that the object in the body had a field called status with a value = 'Failed'
-        expect(result.body.Status).equal('Failed');
+        // test that the object in the body had a field called status with a value = 'Confirmed'
+        expect(result.body.Status).equal('Confirmed');
 
     });
 
     // Clean up after all the tests
     after(async () => {
-      // this removes all the subscriptions we made
-      test.cleanup();
+        // this removes all the subscriptions we made
+        test.cleanup();
     });
 });

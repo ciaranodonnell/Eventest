@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.NoEncodingMessageEncoder = void 0;
-class NoEncodingMessageEncoder {
+export class NoEncodingMessageEncoder {
     packageMessage(message, correlationId) {
         return message;
     }
@@ -9,5 +6,4 @@ class NoEncodingMessageEncoder {
         return brokerMessage;
     }
 }
-exports.NoEncodingMessageEncoder = NoEncodingMessageEncoder;
 //# sourceMappingURL=MessageEncoding.NoEncoding.js.map

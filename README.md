@@ -1,4 +1,4 @@
-# Evenest
+# Eventest
 
 The purpose of this library is to enable a simple route to run end to end tests for Event Driven Systems.
 

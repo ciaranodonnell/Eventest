@@ -1,4 +1,4 @@
-# Eventually
+# Eventest
 
 The purpose of this library is to serve as a demonstration of how to run end to end tests for Event Driven Systems.
 

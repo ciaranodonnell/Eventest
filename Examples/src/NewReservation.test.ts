@@ -43,7 +43,7 @@ describe('Submitting NewReservationRequest', async () => {
         reservationConfirmedSubscription = await test.subscribeToTopic('reservationconfirmed');
 
         // give it a couple of seconds to make sure the subscriptions are active
-        delay(2000);
+        await delay(2000);
     });
 
     it('should get OK status', async () => {
@@ -57,6 +57,7 @@ describe('Submitting NewReservationRequest', async () => {
                 EndDate: moment().add('2','days').format('YYYY-MM-DDTHH:mm:ss'),
                 GuestId: 123
             });
+
         // test that we got a 200 success
         expect(svcResponse.statusCode).equal(200);
     });

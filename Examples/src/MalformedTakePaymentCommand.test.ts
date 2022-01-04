@@ -43,7 +43,7 @@ describe('Submitting Expensive Reservation', async () => {
         reservationRejectedSubscription = await test.subscribeToTopic('reservationrejected');
 
         // give it a couple of seconds to make sure the subscriptions are active
-        delay(2000);
+        await delay(2000);
     });
 
     it('should get OK status', async () => {

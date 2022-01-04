@@ -40,8 +40,22 @@ const delay = promisify(setTimeout);
 import * as dotenv from 'dotenv';
 // Load the .env file if it exists
 dotenv.config();
-
 ```
+
+Create a `.env` file with following environment variables:
+```
+SERVICEBUS_CONNECTION_STRING="Endpoint=sb://<XXXX>.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=<XXXXXXXX>"
+SUBMIT_RESERVATION_SERVICE_ENDPOINT="http://localhost/Reservation"
+GET_RESERVATION_SERVICE_ENDPOINT="http://localhost/Reservation"
+```
+
+Service Bus should be configured with following topics:
+* newreservationreceived
+* takepayment
+* paymenttaken
+* paymentrejected
+* reservationrejected
+
 
 Once we have that setup, we can write our actual test:
 

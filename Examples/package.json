@@ -11,7 +11,7 @@
         "eventest": "^0.1.9",
         "eventest.servicebus": "^0.1.6",
         "mocha": "^9.1.3",
-        "moment": "^2.29.1",
+        "moment": "^2.29.4",
         "ts-node": "^10.4.0",
         "uuid": "^8.3.2"
     },

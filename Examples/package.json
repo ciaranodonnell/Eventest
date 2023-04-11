@@ -1,7 +1,7 @@
 {
     "type": "commonjs",
     "dependencies": {
-        "@azure/service-bus": "^7.4.0",
+        "@azure/service-bus": "^7.9.0",
         "@types/chai": "^4.2.22",
         "@types/mocha": "^9.0.0",
         "@types/node": "^16.11.7",
